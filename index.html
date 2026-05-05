@@ -1,1474 +1,2149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Christian Assembly Heggala</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        pri: { 50:'#E8F5EE',100:'#C6E7D3',200:'#8FCFAD',300:'#58B787',400:'#2D9F66',500:'#1B4332',600:'#163528',700:'#11271E',800:'#0C1914',900:'#070C0A' },
-                        gold: { 50:'#FDF8ED',100:'#F9EDCC',200:'#F0D88F',300:'#E7C352',400:'#D4A843',500:'#B8912E',600:'#8A6D22',700:'#5C4917',800:'#2E240B',900:'#171203' },
-                        cream: { 50:'#FEFDFB',100:'#FAF7F0',200:'#F5EFE3',300:'#EDE5D3' },
-                    },
-                    fontFamily: { display:['Playfair Display','serif'], body:['Source Sans 3','sans-serif'] }
-                }
-            }
-        }
-    </script>
-    <style>
-        :root {
-            --bg: #FAF7F0; --fg: #1A1A2E; --muted: #6B7280; --accent: #D4A843;
-            --card: #FFFFFF; --border: #E5E1D8; --sidebar: #1B4332; --sidebar-hover: #2D9F66;
-        }
-        * { box-sizing: border-box; }
-        body { font-family: 'Source Sans 3', sans-serif; background: var(--bg); color: var(--fg); }
-        .font-display { font-family: 'Playfair Display', serif; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Energy Meter System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg-deep: #060d09;
+    --bg-main: #0a1410;
+    --bg-card: #0f1f18;
+    --bg-card-hover: #142a21;
+    --border: #1a3328;
+    --border-light: #245a3e;
+    --primary: #00e68a;
+    --primary-dim: #00b36b;
+    --primary-glow: rgba(0,230,138,0.15);
+    --accent: #f5a623;
+    --accent-dim: #c4841a;
+    --danger: #ff4757;
+    --danger-dim: #c0392b;
+    --text: #e0f2e9;
+    --text-muted: #6b9b82;
+    --text-dim: #3d6b52;
+  }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #C6E7D3; border-radius: 3px; }
+  * { margin:0; padding:0; box-sizing:border-box; }
 
-        /* Sidebar */
-        .sidebar { width: 260px; min-height: 100vh; background: var(--sidebar); transition: transform 0.3s ease; }
-        .sidebar-link { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: #C6E7D3;
-            border-radius: 8px; margin: 2px 12px; transition: all 0.2s; cursor: pointer; font-size: 15px; }
-        .sidebar-link:hover, .sidebar-link.active { background: rgba(45,159,102,0.25); color: #fff; }
-        .sidebar-link.active { background: var(--sidebar-hover); font-weight: 600; }
-        .sidebar-link i { width: 20px; text-align: center; font-size: 16px; }
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text);
+    overflow-x: hidden;
+  }
 
-        /* Cards */
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-            padding: 24px; transition: box-shadow 0.2s; }
-        .card:hover { box-shadow: 0 4px 20px rgba(27,67,50,0.08); }
+  .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* Stat cards */
-        .stat-card { position: relative; overflow: hidden; }
-        .stat-card::after { content:''; position:absolute; top:-20px; right:-20px; width:80px; height:80px;
-            border-radius:50%; opacity:0.1; }
-        .stat-card.green::after { background: #1B4332; }
-        .stat-card.gold::after { background: #D4A843; }
-        .stat-card.red::after { background: #DC2626; }
-        .stat-card.blue::after { background: #2563EB; }
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-main); }
+  ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--primary-dim); }
 
-        /* Buttons */
-        .btn-primary { background: var(--sidebar); color: #fff; padding: 10px 20px; border-radius: 8px;
-            font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; font-size: 14px; }
-        .btn-primary:hover { background: var(--sidebar-hover); transform: translateY(-1px); }
-        .btn-gold { background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 8px;
-            font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; font-size: 14px; }
-        .btn-gold:hover { background: #B8912E; transform: translateY(-1px); }
-        .btn-outline { background: transparent; color: var(--fg); padding: 10px 20px; border-radius: 8px;
-            font-weight: 500; border: 1.5px solid var(--border); cursor: pointer; transition: all 0.2s; font-size: 14px; }
-        .btn-outline:hover { border-color: var(--sidebar); color: var(--sidebar); }
-        .btn-danger { background: #DC2626; color: #fff; padding: 8px 16px; border-radius: 8px;
-            font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; font-size: 13px; }
-        .btn-danger:hover { background: #B91C1C; }
-        .btn-sm { padding: 6px 14px; font-size: 13px; }
+  /* Background grid pattern */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(0,230,138,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,230,138,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
 
-        /* Form */
-        .form-group { margin-bottom: 16px; }
-        .form-label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; color: #374151; }
-        .form-input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px;
-            font-size: 14px; font-family: inherit; transition: border-color 0.2s; background: #fff; }
-        .form-input:focus { outline: none; border-color: var(--sidebar); box-shadow: 0 0 0 3px rgba(27,67,50,0.1); }
-        select.form-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236B7280' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 20px rgba(0,230,138,0.1), 0 0 60px rgba(0,230,138,0.05);
+  }
+  .glow-accent {
+    box-shadow: 0 0 20px rgba(245,166,35,0.15), 0 0 60px rgba(245,166,35,0.05);
+  }
+  .glow-danger {
+    box-shadow: 0 0 20px rgba(255,71,87,0.15);
+  }
 
-        /* Modal */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100;
-            display: flex; align-items: center; justify-content: center; padding: 16px;
-            opacity: 0; pointer-events: none; transition: opacity 0.25s; }
-        .modal-overlay.show { opacity: 1; pointer-events: all; }
-        .modal-box { background: #fff; border-radius: 16px; width: 100%; max-width: 520px;
-            max-height: 90vh; overflow-y: auto; transform: translateY(20px) scale(0.97);
-            transition: transform 0.25s; }
-        .modal-overlay.show .modal-box { transform: translateY(0) scale(1); }
+  /* Card base */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+  }
+  .card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-light);
+  }
 
-        /* Toast */
-        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 200; display: flex;
-            flex-direction: column; gap: 8px; }
-        .toast { padding: 14px 20px; border-radius: 10px; color: #fff; font-weight: 500;
-            font-size: 14px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); transform: translateX(120%);
-            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); display: flex; align-items: center; gap: 10px; max-width: 360px; }
-        .toast.show { transform: translateX(0); }
-        .toast.success { background: #1B4332; }
-        .toast.error { background: #DC2626; }
-        .toast.info { background: #2563EB; }
-        .toast.warning { background: #D97706; }
+  /* Button styles */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dim));
+    color: var(--bg-deep);
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,230,138,0.3);
+  }
+  .btn-primary:active { transform: translateY(0); }
 
-        /* Notification dropdown */
-        .notif-dropdown { position: absolute; top: 100%; right: 0; width: 360px; background: #fff;
-            border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-            z-index: 50; display: none; }
-        .notif-dropdown.show { display: block; }
+  .btn-outline {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .btn-outline:hover {
+    background: var(--primary-glow);
+    border-color: var(--primary);
+  }
 
-        /* Table */
-        .data-table { width: 100%; border-collapse: collapse; }
-        .data-table th { text-align: left; padding: 12px 16px; font-size: 12px; text-transform: uppercase;
-            letter-spacing: 0.05em; color: var(--muted); border-bottom: 2px solid var(--border); font-weight: 600; }
-        .data-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
-        .data-table tr:hover td { background: #FAF7F0; }
+  .btn-accent {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+    color: var(--bg-deep);
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .btn-accent:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(245,166,35,0.3);
+  }
 
-        /* Badge */
-        .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px;
-            font-size: 12px; font-weight: 600; }
-        .badge-green { background: #E8F5EE; color: #1B4332; }
-        .badge-gold { background: #FDF8ED; color: #8A6D22; }
-        .badge-red { background: #FEE2E2; color: #991B1B; }
-        .badge-blue { background: #DBEAFE; color: #1E40AF; }
+  .btn-danger {
+    background: linear-gradient(135deg, var(--danger), var(--danger-dim));
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Space Grotesk', sans-serif;
+  }
 
-        /* Toggle switch */
-        .toggle { position: relative; width: 48px; height: 26px; cursor: pointer; }
-        .toggle input { opacity: 0; width: 0; height: 0; }
-        .toggle-slider { position: absolute; inset: 0; background: #D1D5DB; border-radius: 26px; transition: 0.3s; }
-        .toggle-slider::before { content: ''; position: absolute; width: 20px; height: 20px; left: 3px; bottom: 3px;
-            background: #fff; border-radius: 50%; transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-        .toggle input:checked + .toggle-slider { background: var(--sidebar); }
-        .toggle input:checked + .toggle-slider::before { transform: translateX(22px); }
+  /* Input styles */
+  .input-field {
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    width: 100%;
+    transition: all 0.3s ease;
+    outline: none;
+  }
+  .input-field:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+  }
+  .input-field::placeholder { color: var(--text-dim); }
 
-        /* Login page */
-        .login-bg { min-height: 100vh; background: linear-gradient(135deg, #1B4332 0%, #2D9F66 50%, #1B4332 100%);
-            display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        .login-bg::before { content: ''; position: absolute; width: 500px; height: 500px; border-radius: 50%;
-            background: rgba(212,168,67,0.1); top: -100px; right: -100px; }
-        .login-bg::after { content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%;
-            background: rgba(212,168,67,0.08); bottom: -50px; left: -50px; }
+  /* Login page */
+  .login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
 
-        /* Page transition */
-        .page-content { animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .login-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: orbFloat 8s ease-in-out infinite;
+  }
 
-        /* Mobile sidebar overlay */
-        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 40;
-            display: none; }
-        .sidebar-overlay.show { display: block; }
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -40px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+  }
 
-        /* Empty state */
-        .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
-        .empty-state i { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
+  @keyframes pulse-ring {
+    0% { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
 
-        /* Print */
-        @media print {
-            .sidebar, .topbar, .btn-primary, .btn-gold, .btn-outline, .btn-danger { display: none !important; }
-            .main-content { margin-left: 0 !important; }
-        }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar { position: fixed; z-index: 45; transform: translateX(-100%); }
-            .sidebar.open { transform: translateX(0); }
-            .main-content { margin-left: 0 !important; }
-            .notif-dropdown { width: 300px; right: -40px; }
-        }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
 
-        /* Subtle background pattern */
-        .main-content { background-image: radial-gradient(circle at 1px 1px, rgba(27,67,50,0.03) 1px, transparent 0);
-            background-size: 32px 32px; }
-    </style>
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes countUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  @keyframes meterSweep {
+    0% { transform: rotate(-90deg); }
+    100% { transform: rotate(90deg); }
+  }
+
+  .animate-slide-up { animation: slideUp 0.5s ease forwards; }
+  .animate-slide-in { animation: slideIn 0.4s ease forwards; }
+  .animate-fade-in { animation: fadeIn 0.5s ease forwards; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background: var(--bg-main);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 40;
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 8px;
+    margin: 2px 12px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .sidebar-link:hover {
+    background: var(--primary-glow);
+    color: var(--text);
+  }
+  .sidebar-link.active {
+    background: var(--primary-glow);
+    color: var(--primary);
+    border-left: 3px solid var(--primary);
+  }
+  .sidebar-link i { width: 20px; text-align: center; font-size: 16px; }
+
+  /* Main content area */
+  .main-content {
+    margin-left: 260px;
+    min-height: 100vh;
+    background: var(--bg-deep);
+  }
+
+  /* Top bar */
+  .topbar {
+    height: 64px;
+    background: var(--bg-main);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    backdrop-filter: blur(12px);
+  }
+
+  /* Stat card */
+  .stat-card {
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 12px 12px 0 0;
+  }
+  .stat-card.green::before { background: var(--primary); }
+  .stat-card.amber::before { background: var(--accent); }
+  .stat-card.red::before { background: var(--danger); }
+  .stat-card.blue::before { background: #3b82f6; }
+
+  /* Meter display */
+  .meter-display {
+    background: var(--bg-deep);
+    border: 2px solid var(--border-light);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .meter-display::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 30%, var(--primary-glow), transparent 60%);
+    pointer-events: none;
+  }
+
+  /* LED blink */
+  .led-blink {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary);
+    animation: blink 1s ease-in-out infinite;
+    box-shadow: 0 0 8px var(--primary);
+  }
+
+  /* Toast notification */
+  .toast-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toast {
+    padding: 14px 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 300px;
+    animation: slideIn 0.3s ease;
+    font-size: 14px;
+    border: 1px solid;
+  }
+  .toast.success {
+    background: rgba(0,230,138,0.1);
+    border-color: rgba(0,230,138,0.3);
+    color: var(--primary);
+  }
+  .toast.error {
+    background: rgba(255,71,87,0.1);
+    border-color: rgba(255,71,87,0.3);
+    color: var(--danger);
+  }
+  .toast.info {
+    background: rgba(245,166,35,0.1);
+    border-color: rgba(245,166,35,0.3);
+    color: var(--accent);
+  }
+
+  /* Modal overlay */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 480px;
+    width: 90%;
+    animation: slideUp 0.3s ease;
+  }
+
+  /* Notification badge */
+  .notif-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 18px;
+    height: 18px;
+    background: var(--danger);
+    border-radius: 50%;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  /* Table styles */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .data-table th {
+    text-align: left;
+    padding: 12px 16px;
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .data-table tr:hover td {
+    background: var(--primary-glow);
+  }
+
+  /* Status badges */
+  .badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+  }
+  .badge-success { background: rgba(0,230,138,0.15); color: var(--primary); }
+  .badge-warning { background: rgba(245,166,35,0.15); color: var(--accent); }
+  .badge-danger { background: rgba(255,71,87,0.15); color: var(--danger); }
+  .badge-info { background: rgba(59,130,246,0.15); color: #3b82f6; }
+
+  /* Mobile sidebar toggle */
+  .mobile-toggle {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--bg-deep);
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 45;
+    box-shadow: 0 4px 20px rgba(0,230,138,0.4);
+  }
+
+  /* Gauge arc */
+  .gauge-container {
+    position: relative;
+    width: 180px;
+    height: 100px;
+    margin: 0 auto;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    height: 8px;
+    background: var(--bg-deep);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main-content { margin-left: 0; }
+    .mobile-toggle { display: flex; align-items: center; justify-content: center; }
+  }
+
+  @media (max-width: 640px) {
+    .topbar { padding: 0 16px; }
+    .stat-grid { grid-template-columns: 1fr !important; }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Hidden pages */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* Signal bars */
+  .signal-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 16px;
+  }
+  .signal-bar {
+    width: 3px;
+    background: var(--primary);
+    border-radius: 1px;
+  }
+
+  /* Ripple on cards */
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(0,230,138,0.15);
+    animation: rippleAnim 0.6s ease-out forwards;
+    pointer-events: none;
+  }
+  @keyframes rippleAnim {
+    to { transform: scale(4); opacity: 0; }
+  }
+
+  /* Tab styles */
+  .tab-btn {
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .tab-btn.active {
+    background: var(--primary-glow);
+    color: var(--primary);
+    border-color: rgba(0,230,138,0.3);
+  }
+  .tab-btn:hover:not(.active) {
+    color: var(--text);
+    background: rgba(255,255,255,0.03);
+  }
+
+  /* Location dot pulse */
+  .loc-pulse {
+    width: 12px;
+    height: 12px;
+    background: var(--danger);
+    border-radius: 50%;
+    position: relative;
+  }
+  .loc-pulse::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid var(--danger);
+    animation: pulse-ring 1.5s infinite;
+  }
+</style>
 </head>
 <body>
 
-<!-- ============ TOAST CONTAINER ============ -->
+<!-- Toast container -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- ============ LOGIN SCREEN ============ -->
-<div id="loginScreen" class="login-bg">
-    <div style="position:relative;z-index:1;width:100%;max-width:420px;padding:16px;">
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/10 backdrop-blur mb-4">
-                <i class="fas fa-church text-3xl text-gold-300"></i>
-            </div>
-            <h1 class="font-display text-3xl font-900 text-white mb-2">Christian Assembly</h1>
-            <p class="text-pri-200 text-lg font-light tracking-wide">Heggala</p>
-        </div>
-        <div class="bg-white rounded-2xl p-8 shadow-2xl">
-            <h2 class="font-display text-xl font-700 mb-6 text-center">Sign In</h2>
-            <div class="form-group">
-                <label class="form-label">Username</label>
-                <input type="text" id="loginUser" class="form-input" placeholder="Enter username" autocomplete="off">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Password</label>
-                <input type="password" id="loginPass" class="form-input" placeholder="Enter password">
-            </div>
-            <div id="loginError" class="text-red-600 text-sm mb-4 hidden"></div>
-            <button onclick="handleLogin()" class="btn-primary w-full text-center py-3 text-base mt-2">
-                <i class="fas fa-sign-in-alt mr-2"></i>Sign In
-            </button>
-            <div class="mt-6 pt-4 border-t border-gray-100 text-sm text-gray-500">
-                <p class="mb-1"><strong>Admin:</strong> admin / admin123</p>
-                <p><strong>Member:</strong> member / member123</p>
-            </div>
-        </div>
+<!-- ===================== LOGIN PAGE ===================== -->
+<div id="loginPage" class="login-container bg-grid">
+  <!-- Background orbs -->
+  <div class="login-orb" style="width:400px;height:400px;background:rgba(0,230,138,0.08);top:-100px;left:-100px;"></div>
+  <div class="login-orb" style="width:300px;height:300px;background:rgba(245,166,35,0.06);bottom:-50px;right:-50px;animation-delay:-3s;"></div>
+  <div class="login-orb" style="width:200px;height:200px;background:rgba(0,230,138,0.05);top:50%;left:60%;animation-delay:-5s;"></div>
+
+  <div style="position:relative;z-index:10;width:90%;max-width:420px;" class="animate-slide-up">
+    <!-- Logo & Title -->
+    <div style="text-align:center;margin-bottom:36px;">
+      <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--primary),var(--primary-dim));margin-bottom:16px;">
+        <i class="fas fa-bolt" style="font-size:28px;color:var(--bg-deep);"></i>
+      </div>
+      <h1 style="font-size:28px;font-weight:700;letter-spacing:-0.5px;">Smart Energy Meter</h1>
+      <p style="color:var(--text-muted);font-size:14px;margin-top:6px;">Real-time electricity monitoring system</p>
     </div>
+
+    <!-- Login Card -->
+    <div class="card glow-primary" style="padding:32px;">
+      <h2 style="font-size:18px;font-weight:600;margin-bottom:24px;">Sign in to your account</h2>
+
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div style="margin-bottom:16px;">
+          <label style="display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;font-weight:500;">Phone Number</label>
+          <div style="position:relative;">
+            <i class="fas fa-phone" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:14px;"></i>
+            <input type="tel" id="loginPhone" class="input-field" style="padding-left:40px;" placeholder="+91 98765 43210" value="+91 98765 43210">
+          </div>
+        </div>
+
+        <div style="margin-bottom:24px;">
+          <label style="display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;font-weight:500;">Password</label>
+          <div style="position:relative;">
+            <i class="fas fa-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:14px;"></i>
+            <input type="password" id="loginPass" class="input-field" style="padding-left:40px;padding-right:44px;" placeholder="Enter password" value="admin123">
+            <button type="button" onclick="togglePassVisibility()" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-dim);cursor:pointer;">
+              <i class="fas fa-eye" id="passEyeIcon"></i>
+            </button>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text-muted);">
+            <input type="checkbox" checked style="accent-color:var(--primary);">
+            Remember me
+          </label>
+          <a href="#" onclick="showToast('Password reset link sent to your phone','info');return false;" style="font-size:13px;color:var(--primary);text-decoration:none;">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width:100%;padding:14px;font-size:15px;">
+          <i class="fas fa-sign-in-alt" style="margin-right:8px;"></i> Sign In
+        </button>
+      </form>
+
+      <div style="text-align:center;margin-top:20px;padding-top:20px;border-top:1px solid var(--border);">
+        <p style="font-size:13px;color:var(--text-dim);">
+          Demo: Use pre-filled credentials
+        </p>
+      </div>
+    </div>
+
+    <p style="text-align:center;margin-top:20px;font-size:12px;color:var(--text-dim);">
+      <i class="fas fa-shield-alt" style="margin-right:4px;"></i>
+      256-bit SSL encrypted connection
+    </p>
+  </div>
 </div>
 
-<!-- ============ MAIN APP ============ -->
-<div id="appScreen" class="hidden">
-    <!-- Sidebar Overlay (mobile) -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<!-- ===================== MAIN APP ===================== -->
+<div id="appContainer" style="display:none;">
 
-    <!-- Sidebar -->
-    <aside class="sidebar fixed top-0 left-0 z-50 flex flex-col" id="sidebar">
-        <div class="p-5 pb-3">
-            <div class="flex items-center gap-3 mb-1">
-                <div class="w-10 h-10 rounded-full bg-gold-400/20 flex items-center justify-center">
-                    <i class="fas fa-church text-gold-300"></i>
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar" aria-label="Main navigation">
+    <div style="padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;">
+      <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary-dim));display:flex;align-items:center;justify-content:center;">
+        <i class="fas fa-bolt" style="font-size:18px;color:var(--bg-deep);"></i>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:15px;letter-spacing:-0.3px;">SmartMeter</div>
+        <div style="font-size:11px;color:var(--text-dim);">Energy Monitor</div>
+      </div>
+    </div>
+
+    <div style="padding:16px 0;">
+      <div style="padding:0 20px 8px;font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;font-weight:600;">Main Menu</div>
+      <a class="sidebar-link active" data-page="dashboard" onclick="navigateTo('dashboard')">
+        <i class="fas fa-th-large"></i> Dashboard
+      </a>
+      <a class="sidebar-link" data-page="monitoring" onclick="navigateTo('monitoring')">
+        <i class="fas fa-chart-area"></i> Monitoring
+      </a>
+      <a class="sidebar-link" data-page="billing" onclick="navigateTo('billing')">
+        <i class="fas fa-file-invoice-dollar"></i> Billing
+      </a>
+      <a class="sidebar-link" data-page="payment" onclick="navigateTo('payment')">
+        <i class="fas fa-credit-card"></i> Payment
+      </a>
+
+      <div style="padding:16px 20px 8px;font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;font-weight:600;">Support</div>
+      <a class="sidebar-link" data-page="notifications" onclick="navigateTo('notifications')" style="position:relative;">
+        <i class="fas fa-bell"></i> Notifications
+        <span class="notif-badge" id="notifBadge">3</span>
+      </a>
+      <a class="sidebar-link" data-page="complaints" onclick="navigateTo('complaints')">
+        <i class="fas fa-headset"></i> Helpline
+      </a>
+      <a class="sidebar-link" data-page="profile" onclick="navigateTo('profile')">
+        <i class="fas fa-user-cog"></i> Settings
+      </a>
+    </div>
+
+    <!-- Sidebar footer - meter status -->
+    <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;border-top:1px solid var(--border);background:var(--bg-deep);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <div class="led-blink"></div>
+        <span style="font-size:12px;color:var(--primary);font-weight:500;">Meter Online</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="signal-bars">
+          <div class="signal-bar" style="height:4px;"></div>
+          <div class="signal-bar" style="height:8px;"></div>
+          <div class="signal-bar" style="height:12px;"></div>
+          <div class="signal-bar" style="height:16px;"></div>
+        </div>
+        <span style="font-size:11px;color:var(--text-dim);">Wi-Fi Connected</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile sidebar toggle -->
+  <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Main Content -->
+  <div class="main-content bg-grid">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <h2 id="pageTitle" style="font-size:18px;font-weight:600;">Dashboard</h2>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div class="led-blink"></div>
+          <span class="mono" style="font-size:12px;color:var(--primary);" id="liveTime">00:00:00</span>
+        </div>
+        <div style="position:relative;cursor:pointer;" onclick="navigateTo('notifications')">
+          <i class="fas fa-bell" style="font-size:18px;color:var(--text-muted);"></i>
+          <span class="notif-badge">3</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 12px;border-radius:8px;border:1px solid var(--border);transition:all 0.2s;" onclick="navigateTo('profile')" onmouseover="this.style.borderColor='var(--border-light)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--primary-dim));display:flex;align-items:center;justify-content:center;">
+            <i class="fas fa-user" style="font-size:13px;color:var(--bg-deep);"></i>
+          </div>
+          <div style="line-height:1.2;">
+            <div style="font-size:13px;font-weight:600;">Rahul Sharma</div>
+            <div style="font-size:11px;color:var(--text-dim);">Meter #SM-4821</div>
+          </div>
+        </div>
+        <button onclick="handleLogout()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:8px;cursor:pointer;color:var(--text-muted);transition:all 0.2s;" onmouseover="this.style.borderColor='var(--danger)';this.style.color='var(--danger)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'" aria-label="Logout">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============ DASHBOARD PAGE ============ -->
+    <section class="page active" id="page-dashboard" style="padding:28px;">
+
+      <!-- Stat Cards -->
+      <div class="stat-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:28px;">
+        <div class="card stat-card green glow-primary" style="padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:12px;color:var(--text-muted);font-weight:500;">Today's Usage</span>
+            <div style="width:36px;height:36px;border-radius:8px;background:var(--primary-glow);display:flex;align-items:center;justify-content:center;">
+              <i class="fas fa-bolt" style="color:var(--primary);font-size:14px;"></i>
+            </div>
+          </div>
+          <div class="mono" style="font-size:28px;font-weight:700;color:var(--primary);" id="todayUsage">12.4</div>
+          <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">kWh</div>
+          <div style="display:flex;align-items:center;gap:4px;margin-top:8px;">
+            <i class="fas fa-arrow-up" style="font-size:10px;color:var(--accent);"></i>
+            <span style="font-size:12px;color:var(--accent);">+8.2%</span>
+            <span style="font-size:12px;color:var(--text-dim);">vs yesterday</span>
+          </div>
+        </div>
+
+        <div class="card stat-card amber" style="padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:12px;color:var(--text-muted);font-weight:500;">Current Load</span>
+            <div style="width:36px;height:36px;border-radius:8px;background:rgba(245,166,35,0.1);display:flex;align-items:center;justify-content:center;">
+              <i class="fas fa-plug" style="color:var(--accent);font-size:14px;"></i>
+            </div>
+          </div>
+          <div class="mono" style="font-size:28px;font-weight:700;color:var(--accent);" id="currentLoad">1.82</div>
+          <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">kW</div>
+          <div style="display:flex;align-items:center;gap:4px;margin-top:8px;">
+            <i class="fas fa-arrow-down" style="font-size:10px;color:var(--primary);"></i>
+            <span style="font-size:12px;color:var(--primary);">-3.1%</span>
+            <span style="font-size:12px;color:var(--text-dim);">vs avg</span>
+          </div>
+        </div>
+
+        <div class="card stat-card blue" style="padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:12px;color:var(--text-muted);font-weight:500;">Monthly Units</span>
+            <div style="width:36px;height:36px;border-radius:8px;background:rgba(59,130,246,0.1);display:flex;align-items:center;justify-content:center;">
+              <i class="fas fa-calendar-alt" style="color:#3b82f6;font-size:14px;"></i>
+            </div>
+          </div>
+          <div class="mono" style="font-size:28px;font-weight:700;color:#3b82f6;" id="monthlyUnits">287.6</div>
+          <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">kWh</div>
+          <div style="display:flex;align-items:center;gap:4px;margin-top:8px;">
+            <span style="font-size:12px;color:var(--text-dim);">of 500 kWh limit</span>
+          </div>
+        </div>
+
+        <div class="card stat-card red" style="padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:12px;color:var(--text-muted);font-weight:500;">Pending Bill</span>
+            <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,71,87,0.1);display:flex;align-items:center;justify-content:center;">
+              <i class="fas fa-rupee-sign" style="color:var(--danger);font-size:14px;"></i>
+            </div>
+          </div>
+          <div class="mono" style="font-size:28px;font-weight:700;color:var(--danger);">2,340</div>
+          <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">INR</div>
+          <div style="display:flex;align-items:center;gap:4px;margin-top:8px;">
+            <span style="font-size:12px;color:var(--danger);">Due: 15 Jan 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main dashboard grid -->
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;margin-bottom:28px;">
+
+        <!-- Live Usage Chart -->
+        <div class="card" style="padding:24px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+            <div>
+              <h3 style="font-size:16px;font-weight:600;">Live Power Consumption</h3>
+              <p style="font-size:12px;color:var(--text-dim);margin-top:2px;">Real-time data from ESP32 module</p>
+            </div>
+            <div style="display:flex;gap:4px;">
+              <button class="tab-btn active" onclick="setChartRange(this,'1h')">1H</button>
+              <button class="tab-btn" onclick="setChartRange(this,'6h')">6H</button>
+              <button class="tab-btn" onclick="setChartRange(this,'24h')">24H</button>
+            </div>
+          </div>
+          <div style="height:280px;">
+            <canvas id="liveChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Smart Meter Display -->
+        <div class="meter-display" style="padding:24px;">
+          <div style="position:relative;z-index:1;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+              <span style="font-size:12px;color:var(--text-muted);font-weight:500;text-transform:uppercase;letter-spacing:1px;">Smart Meter #SM-4821</span>
+              <div class="led-blink"></div>
+            </div>
+
+            <div style="text-align:center;padding:20px 0;">
+              <div class="mono" style="font-size:48px;font-weight:700;color:var(--primary);letter-spacing:2px;text-shadow:0 0 30px rgba(0,230,138,0.4);" id="meterReading">123.45</div>
+              <div style="font-size:14px;color:var(--text-muted);margin-top:4px;">kWh (Total Consumption)</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+              <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
+                <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">Voltage</div>
+                <div class="mono" style="font-size:20px;font-weight:600;" id="meterVoltage">230</div>
+                <div style="font-size:11px;color:var(--text-dim);">Volts</div>
+              </div>
+              <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
+                <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">Current</div>
+                <div class="mono" style="font-size:20px;font-weight:600;color:var(--accent);" id="meterCurrent">4.2</div>
+                <div style="font-size:11px;color:var(--text-dim);">Amps</div>
+              </div>
+              <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
+                <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">Power Factor</div>
+                <div class="mono" style="font-size:20px;font-weight:600;color:#3b82f6;" id="meterPF">0.96</div>
+                <div style="font-size:11px;color:var(--text-dim);">cos &phi;</div>
+              </div>
+              <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;">
+                <div style="font-size:11px;color:var(--text-dim);margin-bottom:4px;">Frequency</div>
+                <div class="mono" style="font-size:20px;font-weight:600;">50.0</div>
+                <div style="font-size:11px;color:var(--text-dim);">Hz</div>
+              </div>
+            </div>
+
+            <div style="margin-top:16px;padding:10px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <i class="fas fa-wifi" style="color:var(--primary);font-size:14px;"></i>
+                <span style="font-size:12px;color:var(--text-muted);">ESP32 Connected</span>
+              </div>
+              <span class="mono" style="font-size:11px;color:var(--primary);">192.168.1.105</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <!-- Weekly breakdown -->
+        <div class="card" style="padding:24px;">
+          <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;">Weekly Breakdown</h3>
+          <div style="height:220px;">
+            <canvas id="weeklyChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Appliance usage -->
+        <div class="card" style="padding:24px;">
+          <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;">Appliance Distribution</h3>
+          <div style="height:220px;">
+            <canvas id="applianceChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MONITORING PAGE ============ -->
+    <section class="page" id="page-monitoring" style="padding:28px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div>
+          <h3 style="font-size:20px;font-weight:600;">Detailed Monitoring</h3>
+          <p style="font-size:13px;color:var(--text-dim);margin-top:2px;">Track your electricity consumption patterns</p>
+        </div>
+        <div style="display:flex;gap:4px;">
+          <button class="tab-btn active" onclick="setMonitorTab(this,'daily')">Daily</button>
+          <button class="tab-btn" onclick="setMonitorTab(this,'weekly')">Weekly</button>
+          <button class="tab-btn" onclick="setMonitorTab(this,'monthly')">Monthly</button>
+        </div>
+      </div>
+
+      <!-- Monitoring stats -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;">
+        <div class="card" style="padding:20px;text-align:center;">
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Peak Consumption</div>
+          <div class="mono" style="font-size:32px;font-weight:700;color:var(--danger);">3.8</div>
+          <div style="font-size:12px;color:var(--text-dim);">kW at 2:00 PM</div>
+        </div>
+        <div class="card" style="padding:20px;text-align:center;">
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Average Load</div>
+          <div class="mono" style="font-size:32px;font-weight:700;color:var(--primary);">1.4</div>
+          <div style="font-size:12px;color:var(--text-dim);">kW average</div>
+        </div>
+        <div class="card" style="padding:20px;text-align:center;">
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Minimum Load</div>
+          <div class="mono" style="font-size:32px;font-weight:700;color:#3b82f6;">0.3</div>
+          <div style="font-size:12px;color:var(--text-dim);">kW at 4:00 AM</div>
+        </div>
+      </div>
+
+      <!-- Hourly chart -->
+      <div class="card" style="padding:24px;margin-bottom:24px;">
+        <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;">Hourly Consumption Pattern</h3>
+        <div style="height:300px;">
+          <canvas id="hourlyChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Consumption log table -->
+      <div class="card" style="padding:24px;">
+        <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;">Consumption Log</h3>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Voltage (V)</th>
+                <th>Current (A)</th>
+                <th>Power (kW)</th>
+                <th>Units (kWh)</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="consumptionLog"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ BILLING PAGE ============ -->
+    <section class="page" id="page-billing" style="padding:28px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div>
+          <h3 style="font-size:20px;font-weight:600;">Billing History</h3>
+          <p style="font-size:13px;color:var(--text-dim);margin-top:2px;">View and download your electricity bills</p>
+        </div>
+        <button class="btn-outline" onclick="showToast('Generating PDF bill...','info')">
+          <i class="fas fa-download" style="margin-right:6px;"></i> Download Current Bill
+        </button>
+      </div>
+
+      <!-- Current bill highlight -->
+      <div class="card glow-primary" style="padding:28px;margin-bottom:24px;border-color:var(--border-light);">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Current Bill - January 2025</div>
+            <div style="display:flex;align-items:baseline;gap:8px;">
+              <span style="font-size:14px;color:var(--text-muted);">INR</span>
+              <span class="mono" style="font-size:42px;font-weight:700;color:var(--primary);">2,340</span>
+            </div>
+            <div style="font-size:13px;color:var(--text-dim);margin-top:4px;">287.6 kWh consumed &bull; Due: 15 Jan 2025</div>
+          </div>
+          <button class="btn-primary" style="padding:14px 32px;font-size:15px;" onclick="navigateTo('payment')">
+            Pay Now <i class="fas fa-arrow-right" style="margin-left:8px;"></i>
+          </button>
+        </div>
+
+        <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+            <div>
+              <div style="font-size:11px;color:var(--text-dim);">Fixed Charge</div>
+              <div class="mono" style="font-size:16px;font-weight:600;margin-top:2px;">100.00</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text-dim);">Energy Charge (287.6 kWh)</div>
+              <div class="mono" style="font-size:16px;font-weight:600;margin-top:2px;">1,912.70</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text-dim);">Tax (18% GST)</div>
+              <div class="mono" style="font-size:16px;font-weight:600;margin-top:2px;">362.30</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text-dim);">Total</div>
+              <div class="mono" style="font-size:16px;font-weight:600;color:var(--primary);margin-top:2px;">2,340.00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bill progress -->
+      <div class="card" style="padding:24px;margin-bottom:24px;">
+        <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;">Monthly Consumption Trend</h3>
+        <div style="height:250px;">
+          <canvas id="billTrendChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Bill history table -->
+      <div class="card" style="padding:24px;">
+        <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;">Previous Bills</h3>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Bill ID</th>
+                <th>Period</th>
+                <th>Units (kWh)</th>
+                <th>Amount (INR)</th>
+                <th>Due Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="billHistory"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PAYMENT PAGE ============ -->
+    <section class="page" id="page-payment" style="padding:28px;">
+      <div style="margin-bottom:24px;">
+        <h3 style="font-size:20px;font-weight:600;">Pay Electricity Bill</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:2px;">Secure online payment gateway</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 380px;gap:24px;">
+        <!-- Payment form -->
+        <div>
+          <div class="card" style="padding:28px;margin-bottom:20px;">
+            <h3 style="font-size:16px;font-weight:600;margin-bottom:20px;">Payment Method</h3>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;">
+              <div class="payment-method active" onclick="selectPaymentMethod(this,'upi')" style="background:var(--bg-deep);border:2px solid var(--primary);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.2s;">
+                <i class="fas fa-mobile-alt" style="font-size:24px;color:var(--primary);margin-bottom:8px;display:block;"></i>
+                <div style="font-size:13px;font-weight:600;">UPI</div>
+              </div>
+              <div class="payment-method" onclick="selectPaymentMethod(this,'card')" style="background:var(--bg-deep);border:2px solid var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.2s;">
+                <i class="fas fa-credit-card" style="font-size:24px;color:var(--text-muted);margin-bottom:8px;display:block;"></i>
+                <div style="font-size:13px;font-weight:600;">Card</div>
+              </div>
+              <div class="payment-method" onclick="selectPaymentMethod(this,'netbanking')" style="background:var(--bg-deep);border:2px solid var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.2s;">
+                <i class="fas fa-university" style="font-size:24px;color:var(--text-muted);margin-bottom:8px;display:block;"></i>
+                <div style="font-size:13px;font-weight:600;">Net Banking</div>
+              </div>
+            </div>
+
+            <!-- UPI payment -->
+            <div id="payMethod-upi">
+              <div style="margin-bottom:16px;">
+                <label style="display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;">UPI ID</label>
+                <input type="text" class="input-field" placeholder="yourname@upi" value="rahul@paytm">
+              </div>
+            </div>
+
+            <!-- Card payment -->
+            <div id="payMethod-card" style="display:none;">
+              <div style="margin-bottom:16px;">
+                <label style="display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;">Card Number</label>
+                <input type="text" class="input-field mono" placeholder="1234 5678 9012 3456" value="4111 1111 1111 1111">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                <div>
+                  <label style="display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;">Expiry</label>
+                  <input type="text" class="input-field mono" placeholder="MM/YY" value="12/26">
                 </div>
                 <div>
-                    <h2 class="font-display text-white font-700 text-sm leading-tight">Christian Assembly</h2>
-                    <p class="text-pri-200 text-xs">Heggala</p>
+                  <label style="display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;">CVV</label>
+                  <input type="password" class="input-field mono" placeholder="***" value="123">
                 </div>
+              </div>
+              <div>
+                <label style="display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;">Cardholder Name</label>
+                <input type="text" class="input-field" placeholder="Full name on card" value="Rahul Sharma">
+              </div>
             </div>
+
+            <!-- Net banking -->
+            <div id="payMethod-netbanking" style="display:none;">
+              <label style="display:block;font-size:13px;color:var(--text-muted);margin-bottom:8px;">Select Bank</label>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div class="bank-option" onclick="selectBank(this)" style="background:var(--bg-deep);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.2s;">
+                  <i class="fas fa-university" style="color:var(--accent);"></i>
+                  <span style="font-size:13px;">SBI</span>
+                </div>
+                <div class="bank-option" onclick="selectBank(this)" style="background:var(--bg-deep);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.2s;">
+                  <i class="fas fa-university" style="color:#3b82f6;"></i>
+                  <span style="font-size:13px;">HDFC Bank</span>
+                </div>
+                <div class="bank-option" onclick="selectBank(this)" style="background:var(--bg-deep);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.2s;">
+                  <i class="fas fa-university" style="color:var(--primary);"></i>
+                  <span style="font-size:13px;">ICICI Bank</span>
+                </div>
+                <div class="bank-option" onclick="selectBank(this)" style="background:var(--bg-deep);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.2s;">
+                  <i class="fas fa-university" style="color:var(--danger);"></i>
+                  <span style="font-size:13px;">Axis Bank</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transaction history -->
+          <div class="card" style="padding:24px;">
+            <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;">Recent Transactions</h3>
+            <div id="transactionList"></div>
+          </div>
         </div>
-        <div class="px-4 mb-2"><div class="border-t border-pri-400/30"></div></div>
-        <nav class="flex-1 py-1 overflow-y-auto" id="sidebarNav">
-            <!-- Populated by JS -->
-        </nav>
-        <div class="p-4 border-t border-pri-400/30">
-            <div class="flex items-center gap-3 px-2">
-                <div class="w-9 h-9 rounded-full bg-pri-400/30 flex items-center justify-center">
-                    <i class="fas fa-user text-pri-100 text-sm"></i>
+
+        <!-- Payment summary -->
+        <div>
+          <div class="card glow-accent" style="padding:24px;position:sticky;top:92px;">
+            <h3 style="font-size:16px;font-weight:600;margin-bottom:20px;">Payment Summary</h3>
+            <div style="background:var(--bg-deep);border-radius:10px;padding:20px;margin-bottom:16px;">
+              <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">Amount Payable</div>
+              <div class="mono" style="font-size:36px;font-weight:700;color:var(--accent);">2,340.00</div>
+              <div style="font-size:12px;color:var(--text-dim);margin-top:2px;">INR</div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+              <div style="display:flex;justify-content:space-between;font-size:14px;">
+                <span style="color:var(--text-muted);">Consumer Name</span>
+                <span style="font-weight:500;">Rahul Sharma</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;">
+                <span style="color:var(--text-muted);">Meter Number</span>
+                <span class="mono" style="font-weight:500;">SM-4821</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;">
+                <span style="color:var(--text-muted);">Bill Period</span>
+                <span style="font-weight:500;">Jan 2025</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;">
+                <span style="color:var(--text-muted);">Units Consumed</span>
+                <span class="mono" style="font-weight:500;">287.6 kWh</span>
+              </div>
+            </div>
+
+            <button class="btn-accent" style="width:100%;padding:14px;font-size:15px;" onclick="processPayment()">
+              <i class="fas fa-lock" style="margin-right:8px;"></i> Pay Securely
+            </button>
+
+            <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-top:16px;">
+              <i class="fas fa-shield-alt" style="color:var(--text-dim);font-size:14px;"></i>
+              <span style="font-size:11px;color:var(--text-dim);">256-bit SSL &bull; PCI DSS Compliant</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ NOTIFICATIONS PAGE ============ -->
+    <section class="page" id="page-notifications" style="padding:28px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div>
+          <h3 style="font-size:20px;font-weight:600;">Notifications</h3>
+          <p style="font-size:13px;color:var(--text-dim);margin-top:2px;">Stay updated with alerts and reminders</p>
+        </div>
+        <button class="btn-outline" onclick="markAllRead()">
+          <i class="fas fa-check-double" style="margin-right:6px;"></i> Mark all read
+        </button>
+      </div>
+
+      <div id="notificationsList" style="display:flex;flex-direction:column;gap:12px;"></div>
+    </section>
+
+    <!-- ============ COMPLAINTS PAGE ============ -->
+    <section class="page" id="page-complaints" style="padding:28px;">
+      <div style="margin-bottom:24px;">
+        <h3 style="font-size:20px;font-weight:600;">Helpline & Complaints</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:2px;">Report electrical issues and track resolution</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <!-- New complaint form -->
+        <div class="card" style="padding:28px;">
+          <h3 style="font-size:16px;font-weight:600;margin-bottom:20px;">
+            <i class="fas fa-plus-circle" style="color:var(--primary);margin-right:8px;"></i>
+            File a Complaint
+          </h3>
+
+          <form onsubmit="submitComplaint(event)">
+            <div style="margin-bottom:16px;">
+              <label style="display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;">Issue Category</label>
+              <select class="input-field" id="complaintCategory" style="cursor:pointer;">
+                <option value="">Select category...</option>
+                <option value="power_outage">Power Outage</option>
+                <option value="meter_fault">Meter Fault / Damage</option>
+                <option value="billing_error">Billing Error</option>
+                <option value="voltage_fluctuation">Voltage Fluctuation</option>
+                <option value="wiring_issue">Wiring Issue</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom:16px;">
+              <label style="display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;">Description</label>
+              <textarea class="input-field" id="complaintDesc" rows="4" placeholder="Describe your issue in detail..." style="resize:vertical;"></textarea>
+            </div>
+
+            <div style="margin-bottom:16px;">
+              <label style="display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;">Priority</label>
+              <div style="display:flex;gap:10px;">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;">
+                  <input type="radio" name="priority" value="low" style="accent-color:var(--primary);"> Low
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;">
+                  <input type="radio" name="priority" value="medium" checked style="accent-color:var(--accent);"> Medium
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;">
+                  <input type="radio" name="priority" value="high" style="accent-color:var(--danger);"> High
+                </label>
+              </div>
+            </div>
+
+            <div style="margin-bottom:20px;">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text-muted);">
+                <input type="checkbox" checked style="accent-color:var(--primary);" id="shareLocation">
+                Share my location with service team
+              </label>
+              <div id="locationInfo" style="margin-top:8px;padding:10px;background:var(--bg-deep);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;gap:8px;">
+                <div class="loc-pulse"></div>
+                <div>
+                  <div style="font-size:12px;color:var(--primary);">Location detected</div>
+                  <div class="mono" style="font-size:11px;color:var(--text-dim);">28.6139 N, 77.2090 E &bull; New Delhi</div>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-white text-sm font-600 truncate" id="sidebarUserName"></p>
-                    <p class="text-pri-300 text-xs" id="sidebarUserRole"></p>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width:100%;padding:14px;font-size:15px;">
+              <i class="fas fa-paper-plane" style="margin-right:8px;"></i> Submit Complaint
+            </button>
+          </form>
+        </div>
+
+        <!-- Existing complaints -->
+        <div>
+          <div class="card" style="padding:24px;margin-bottom:20px;">
+            <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;">My Complaints</h3>
+            <div id="complaintsList" style="display:flex;flex-direction:column;gap:12px;"></div>
+          </div>
+
+          <!-- Emergency contacts -->
+          <div class="card" style="padding:24px;border-color:rgba(255,71,87,0.3);">
+            <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;color:var(--danger);">
+              <i class="fas fa-exclamation-triangle" style="margin-right:8px;"></i>
+              Emergency Contacts
+            </h3>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg-deep);border-radius:8px;">
+                <div>
+                  <div style="font-size:14px;font-weight:500;">Power Emergency</div>
+                  <div class="mono" style="font-size:13px;color:var(--text-muted);">1912</div>
                 </div>
-                <button onclick="handleLogout()" class="text-pri-300 hover:text-white transition" title="Logout">
-                    <i class="fas fa-sign-out-alt"></i>
+                <button class="btn-danger" style="padding:8px 16px;font-size:12px;" onclick="showToast('Calling 1912...','info')">
+                  <i class="fas fa-phone"></i> Call
                 </button>
-            </div>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content min-h-screen" style="margin-left:260px;" id="mainContent">
-        <!-- Top Bar -->
-        <header class="topbar sticky top-0 z-30 bg-cream-100/80 backdrop-blur-md border-b border-cream-300">
-            <div class="flex items-center justify-between px-6 py-4">
-                <div class="flex items-center gap-3">
-                    <button onclick="toggleSidebar()" class="md:hidden text-pri-500 text-xl">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <h1 class="font-display text-xl font-700 text-pri-500" id="pageTitle">Dashboard</h1>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg-deep);border-radius:8px;">
+                <div>
+                  <div style="font-size:14px;font-weight:500;">Local Line-man</div>
+                  <div class="mono" style="font-size:13px;color:var(--text-muted);">+91 98765 00001</div>
                 </div>
-                <div class="flex items-center gap-4">
-                    <!-- Notification Bell -->
-                    <div class="relative" id="notifWrapper">
-                        <button onclick="toggleNotifDropdown()" class="relative text-pri-500 hover:text-pri-700 transition text-lg">
-                            <i class="fas fa-bell"></i>
-                            <span id="notifBadge" class="hidden absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-700">0</span>
-                        </button>
-                        <div class="notif-dropdown" id="notifDropdown">
-                            <div class="flex items-center justify-between p-4 border-b border-cream-300">
-                                <h3 class="font-700 text-sm">Notifications</h3>
-                                <button onclick="markAllRead()" class="text-xs text-pri-500 hover:underline font-600">Mark all read</button>
-                            </div>
-                            <div id="notifList" class="max-h-80 overflow-y-auto">
-                                <!-- Populated by JS -->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-sm text-gray-500 hidden sm:block" id="topDate"></div>
+                <button class="btn-outline" style="padding:8px 16px;font-size:12px;" onclick="showToast('Calling line-man...','info')">
+                  <i class="fas fa-phone"></i> Call
+                </button>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--bg-deep);border-radius:8px;">
+                <div>
+                  <div style="font-size:14px;font-weight:500;">Customer Care</div>
+                  <div class="mono" style="font-size:13px;color:var(--text-muted);">1800-XXX-XXXX</div>
                 </div>
+                <button class="btn-outline" style="padding:8px 16px;font-size:12px;" onclick="showToast('Calling customer care...','info')">
+                  <i class="fas fa-phone"></i> Call
+                </button>
+              </div>
             </div>
-        </header>
-
-        <!-- Dynamic Page Content -->
-        <div class="p-6 page-content" id="pageContent">
-            <!-- Populated by JS -->
+          </div>
         </div>
-    </main>
-</div>
+      </div>
+    </section>
 
-<!-- ============ MODAL ============ -->
-<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
-    <div class="modal-box" id="modalBox">
-        <div class="flex items-center justify-between p-5 border-b border-cream-300">
-            <h3 class="font-display text-lg font-700" id="modalTitle">Modal</h3>
-            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-700 transition text-xl leading-none">&times;</button>
+    <!-- ============ PROFILE / SETTINGS PAGE ============ -->
+    <section class="page" id="page-profile" style="padding:28px;">
+      <div style="margin-bottom:24px;">
+        <h3 style="font-size:20px;font-weight:600;">Account Settings</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:2px;">Manage your profile and preferences</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <!-- Profile info -->
+        <div class="card" style="padding:28px;">
+          <h3 style="font-size:16px;font-weight:600;margin-bottom:20px;">Profile Information</h3>
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+            <div style="width:72px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--primary),var(--primary-dim));display:flex;align-items:center;justify-content:center;">
+              <i class="fas fa-user" style="font-size:28px;color:var(--bg-deep);"></i>
+            </div>
+            <div>
+              <div style="font-size:18px;font-weight:600;">Rahul Sharma</div>
+              <div style="font-size:13px;color:var(--text-muted);">Consumer ID: CON-4821</div>
+              <div style="font-size:12px;color:var(--primary);margin-top:2px;">Active Connection</div>
+            </div>
+          </div>
+
+          <form onsubmit="updateProfile(event)" style="display:flex;flex-direction:column;gap:14px;">
+            <div>
+              <label style="display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;">Full Name</label>
+              <input type="text" class="input-field" value="Rahul Sharma" id="profileName">
+            </div>
+            <div>
+              <label style="display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;">Phone Number</label>
+              <input type="tel" class="input-field" value="+91 98765 43210" id="profilePhone">
+            </div>
+            <div>
+              <label style="display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;">Email</label>
+              <input type="email" class="input-field" value="rahul.sharma@email.com" id="profileEmail">
+            </div>
+            <div>
+              <label style="display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;">Address</label>
+              <textarea class="input-field" rows="2" style="resize:vertical;" id="profileAddress">42, Sector 15, Vasundhara, Ghaziabad, UP - 201012</textarea>
+            </div>
+            <button type="submit" class="btn-primary" style="align-self:flex-start;padding:10px 28px;">
+              <i class="fas fa-save" style="margin-right:6px;"></i> Save Changes
+            </button>
+          </form>
         </div>
-        <div class="p-5" id="modalBody"></div>
+
+        <!-- Connection details & preferences -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <div class="card" style="padding:24px;">
+            <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;">Connection Details</h3>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+                <span style="color:var(--text-muted);font-size:14px;">Meter Number</span>
+                <span class="mono" style="font-size:14px;font-weight:500;">SM-4821</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+                <span style="color:var(--text-muted);font-size:14px;">Connection Type</span>
+                <span style="font-size:14px;font-weight:500;">Single Phase (230V)</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+                <span style="color:var(--text-muted);font-size:14px;">Sanctioned Load</span>
+                <span class="mono" style="font-size:14px;font-weight:500;">5 kW</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+                <span style="color:var(--text-muted);font-size:14px;">Meter Type</span>
+                <span style="font-size:14px;font-weight:500;">Smart (ESP32 Wi-Fi)</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:10px 0;">
+                <span style="color:var(--text-muted);font-size:14px;">Installation Date</span>
+                <span class="mono" style="font-size:14px;font-weight:500;">12 Mar 2024</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:24px;">
+            <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;">Notification Preferences</h3>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+                <span style="font-size:14px;">Bill reminders</span>
+                <input type="checkbox" checked style="accent-color:var(--primary);width:18px;height:18px;">
+              </label>
+              <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+                <span style="font-size:14px;">Usage alerts (high consumption)</span>
+                <input type="checkbox" checked style="accent-color:var(--primary);width:18px;height:18px;">
+              </label>
+              <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+                <span style="font-size:14px;">Power outage notifications</span>
+                <input type="checkbox" checked style="accent-color:var(--primary);width:18px;height:18px;">
+              </label>
+              <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+                <span style="font-size:14px;">SMS notifications</span>
+                <input type="checkbox" style="accent-color:var(--primary);width:18px;height:18px;">
+              </label>
+              <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+                <span style="font-size:14px;">Email reports</span>
+                <input type="checkbox" style="accent-color:var(--primary);width:18px;height:18px;">
+              </label>
+            </div>
+          </div>
+
+          <div class="card" style="padding:24px;border-color:rgba(255,71,87,0.2);">
+            <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;color:var(--danger);">Danger Zone</h3>
+            <button class="btn-danger" style="width:100%;padding:12px;font-size:14px;" onclick="handleLogout()">
+              <i class="fas fa-sign-out-alt" style="margin-right:8px;"></i> Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /main-content -->
+</div><!-- /appContainer -->
+
+<!-- Payment Success Modal (hidden) -->
+<div id="paymentModal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-box" style="text-align:center;">
+    <div style="width:72px;height:72px;border-radius:50%;background:rgba(0,230,138,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+      <i class="fas fa-check" style="font-size:32px;color:var(--primary);"></i>
     </div>
+    <h3 style="font-size:22px;font-weight:700;margin-bottom:8px;">Payment Successful</h3>
+    <p style="color:var(--text-muted);font-size:14px;margin-bottom:6px;">Your electricity bill has been paid.</p>
+    <div class="mono" style="font-size:28px;font-weight:700;color:var(--primary);margin:16px 0;">INR 2,340.00</div>
+    <div style="background:var(--bg-deep);border-radius:8px;padding:14px;margin:16px 0;text-align:left;">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
+        <span style="color:var(--text-muted);">Transaction ID</span>
+        <span class="mono">TXN-2025-084721</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
+        <span style="color:var(--text-muted);">Payment Method</span>
+        <span id="modalPayMethod">UPI</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;">
+        <span style="color:var(--text-muted);">Date & Time</span>
+        <span id="modalPayTime">--</span>
+      </div>
+    </div>
+    <button class="btn-primary" style="width:100%;padding:14px;font-size:15px;margin-top:8px;" onclick="document.getElementById('paymentModal').style.display='none'">
+      Done
+    </button>
+  </div>
 </div>
 
 <script>
-/* ========================================================================
-   STATE & DATA MANAGEMENT
-   ======================================================================== */
-const STORAGE_KEY = 'cah_church_app';
+// ==================== DATA ====================
 
-// Default data seeded on first load
-function getDefaultData() {
-    const now = new Date().toISOString();
-    const monthAgo = new Date(Date.now() - 30*24*60*60*1000).toISOString();
-    return {
-        users: [
-            { id:'admin', name:'Administrator', role:'admin', password:'admin123' },
-            { id:'member', name:'Church Member', role:'user', password:'member123' }
-        ],
-        meetings: [
-            { id: genId(), title:'Sunday Worship Service', date: fmtDate(new Date()), description:'Regular Sunday worship service with praise, prayer and message. All members are requested to come on time.', createdAt: now },
-            { id: genId(), title:'Prayer Meeting', date: fmtDate(new Date(Date.now()+2*24*60*60*1000)), description:'Mid-week prayer meeting for intercession and thanksgiving. Bring your prayer requests.', createdAt: now },
-            { id: genId(), title:'Youth Fellowship', date: fmtDate(new Date(Date.now()+5*24*60*60*1000)), description:'Youth fellowship gathering with games, worship and Bible study. Age group: 15-35.', createdAt: now },
-        ],
-        offerings: [
-            { id: genId(), date: fmtDate(new Date()), type:'Sunday Offering', amount:15500, description:'First Sunday offering', createdAt: now },
-            { id: genId(), date: fmtDate(new Date(Date.now()-7*24*60*60*1000)), type:'Tithe', amount:8200, description:'Tithes collected', createdAt: monthAgo },
-            { id: genId(), date: fmtDate(new Date(Date.now()-14*24*60*60*1000)), type:'Thanksgiving', amount:5000, description:'Thanksgiving offering', createdAt: monthAgo },
-        ],
-        expenses: [
-            { id: genId(), date: fmtDate(new Date()), category:'Fuel', amount:1500, description:'Pastor travel fuel', person:'', createdAt: now },
-            { id: genId(), date: fmtDate(new Date(Date.now()-3*24*60*60*1000)), category:'Food', amount:3200, description:'Sunday fellowship meals', person:'', createdAt: now },
-            { id: genId(), date: fmtDate(new Date(Date.now()-10*24*60*60*1000)), category:'Given to Person', amount:5000, description:'Financial help for medical', person:'Brother Rajesh', createdAt: monthAgo },
-            { id: genId(), date: fmtDate(new Date(Date.now()-5*24*60*60*1000)), category:'Electricity', amount:2100, description:'Monthly electricity bill', person:'', createdAt: now },
-        ],
-        bankTransactions: [
-            { id: genId(), date: fmtDate(new Date(Date.now()-20*24*60*60*1000)), type:'Deposit', amount:15500, description:'Sunday offering deposited', reference:'', createdAt: monthAgo },
-            { id: genId(), date: fmtDate(new Date(Date.now()-15*24*60*60*1000)), type:'Withdrawal', amount:3200, description:'Food expense withdrawal', reference:'', createdAt: monthAgo },
-            { id: genId(), date: fmtDate(new Date(Date.now()-10*24*60*60*1000)), type:'Deposit', amount:8200, description:'Tithe deposited', reference:'', createdAt: monthAgo },
-            { id: genId(), date: fmtDate(new Date(Date.now()-5*24*60*60*1000)), type:'Withdrawal', amount:6600, description:'Fuel + electricity', reference:'', createdAt: now },
-        ],
-        settings: {
-            showOfferingsToUsers: true,
-            showExpensesToUsers: false,
-            showBankToUsers: false,
-            churchName: 'Christian Assembly Heggala'
-        },
-        notifications: [
-            { id: genId(), title:'Welcome to the App', message:'Church management app is now active. Admin can post meetings and manage finances.', time: now, read: false },
-            { id: genId(), title:'Sunday Service Posted', message:'Sunday Worship Service has been scheduled.', time: now, read: false },
-        ]
-    };
-}
+// Mock user data
+const userData = {
+  name: 'Rahul Sharma',
+  phone: '+91 98765 43210',
+  meterId: 'SM-4821',
+  consumerId: 'CON-4821',
+  totalUnits: 123.45
+};
 
-// Load / Save data
-function loadData() {
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) return JSON.parse(raw);
-    } catch(e) {}
-    const d = getDefaultData();
-    saveData(d);
-    return d;
-}
-function saveData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-
-let APP = loadData();
-let currentUser = null;
-let currentPage = 'dashboard';
-let chartInstance = null;
-
-/* ========================================================================
-   UTILITY FUNCTIONS
-   ======================================================================== */
-function genId() { return Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
-function fmtDate(d) {
-    const dt = new Date(d);
-    return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
-}
-function fmtDateDisplay(str) {
-    if (!str) return '';
-    const d = new Date(str + 'T00:00:00');
-    return d.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
-}
-function fmtCurrency(n) { return '₹' + Number(n||0).toLocaleString('en-IN'); }
-function fmtTime(iso) {
-    const d = new Date(iso);
-    const diff = Date.now() - d.getTime();
-    if (diff < 60000) return 'Just now';
-    if (diff < 3600000) return Math.floor(diff/60000)+'m ago';
-    if (diff < 86400000) return Math.floor(diff/3600000)+'h ago';
-    return Math.floor(diff/86400000)+'d ago';
-}
-function getMonthStr(d) {
-    const dt = new Date(d);
-    return dt.toLocaleDateString('en-IN',{month:'short',year:'2-digit'});
-}
-function getCurrentMonthItems(items) {
-    const now = new Date();
-    const y = now.getFullYear(), m = now.getMonth();
-    return items.filter(i => { const d = new Date(i.date+'T00:00:00'); return d.getFullYear()===y && d.getMonth()===m; });
-}
-function sumField(items, field) { return items.reduce((s,i) => s + (Number(i[field])||0), 0); }
-
-/* ========================================================================
-   TOAST NOTIFICATION SYSTEM
-   ======================================================================== */
-function showToast(message, type='success') {
-    const container = document.getElementById('toastContainer');
-    const icons = { success:'fa-check-circle', error:'fa-exclamation-circle', info:'fa-info-circle', warning:'fa-exclamation-triangle' };
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `<i class="fas ${icons[type]||icons.info}"></i><span>${message}</span>`;
-    container.appendChild(toast);
-    requestAnimationFrame(() => toast.classList.add('show'));
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 400);
-    }, 3500);
-}
-
-/* ========================================================================
-   BROWSER NOTIFICATION PERMISSION
-   ======================================================================== */
-function requestNotifPermission() {
-    if ('Notification' in window && Notification.permission === 'default') {
-        Notification.requestPermission();
-    }
-}
-function sendBrowserNotif(title, body) {
-    if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification(title, { body, icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⛪</text></svg>' });
-    }
-}
-
-/* ========================================================================
-   AUTHENTICATION
-   ======================================================================== */
-function handleLogin() {
-    const username = document.getElementById('loginUser').value.trim();
-    const password = document.getElementById('loginPass').value.trim();
-    const errEl = document.getElementById('loginError');
-    if (!username || !password) { errEl.textContent='Please enter both username and password.'; errEl.classList.remove('hidden'); return; }
-    const user = APP.users.find(u => u.id === username && u.password === password);
-    if (!user) { errEl.textContent='Invalid username or password.'; errEl.classList.remove('hidden'); return; }
-    errEl.classList.add('hidden');
-    currentUser = user;
-    sessionStorage.setItem('cah_session', user.id);
-    requestNotifPermission();
-    showApp();
-}
-function handleLogout() {
-    currentUser = null;
-    sessionStorage.removeItem('cah_session');
-    document.getElementById('appScreen').classList.add('hidden');
-    document.getElementById('loginScreen').classList.remove('hidden');
-    document.getElementById('loginUser').value = '';
-    document.getElementById('loginPass').value = '';
-}
-function checkSession() {
-    const sid = sessionStorage.getItem('cah_session');
-    if (sid) {
-        const user = APP.users.find(u => u.id === sid);
-        if (user) { currentUser = user; showApp(); return; }
-    }
-}
-// Enter key on login
-document.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !document.getElementById('loginScreen').classList.contains('hidden')) handleLogin();
-});
-
-/* ========================================================================
-   APP INITIALIZATION & NAVIGATION
-   ======================================================================== */
-function showApp() {
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('appScreen').classList.remove('hidden');
-    document.getElementById('sidebarUserName').textContent = currentUser.name;
-    document.getElementById('sidebarUserRole').textContent = currentUser.role === 'admin' ? 'Administrator' : 'Member';
-    document.getElementById('topDate').textContent = new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    buildSidebar();
-    navigateTo('dashboard');
-    updateNotifBadge();
-}
-
-const NAV_ITEMS = [
-    { id:'dashboard', icon:'fa-th-large', label:'Dashboard', roles:['admin','user'] },
-    { id:'meetings', icon:'fa-calendar-alt', label:'Meetings', roles:['admin','user'] },
-    { id:'offerings', icon:'fa-hand-holding-heart', label:'Offerings', roles:['admin','user'], visibility:'showOfferingsToUsers' },
-    { id:'expenses', icon:'fa-receipt', label:'Expenses', roles:['admin','user'], visibility:'showExpensesToUsers' },
-    { id:'bank', icon:'fa-university', label:'Bank Report', roles:['admin','user'], visibility:'showBankToUsers' },
-    { id:'settings', icon:'fa-cog', label:'Settings', roles:['admin'] },
+// Mock bill history
+const billHistory = [
+  { id: 'BL-2025-001', period: 'Jan 2025', units: 287.6, amount: 2340, due: '15 Jan 2025', status: 'pending' },
+  { id: 'BL-2024-012', period: 'Dec 2024', units: 312.4, amount: 2568, due: '15 Dec 2024', status: 'paid' },
+  { id: 'BL-2024-011', period: 'Nov 2024', units: 278.1, amount: 2234, due: '15 Nov 2024', status: 'paid' },
+  { id: 'BL-2024-010', period: 'Oct 2024', units: 295.8, amount: 2410, due: '15 Oct 2024', status: 'paid' },
+  { id: 'BL-2024-009', period: 'Sep 2024', units: 310.2, amount: 2542, due: '15 Sep 2024', status: 'paid' },
+  { id: 'BL-2024-008', period: 'Aug 2024', units: 345.6, amount: 2890, due: '15 Aug 2024', status: 'paid' },
 ];
 
-function buildSidebar() {
-    const nav = document.getElementById('sidebarNav');
-    nav.innerHTML = '';
-    NAV_ITEMS.forEach(item => {
-        // Role check
-        if (!item.roles.includes(currentUser.role)) return;
-        // Visibility check for non-admin users
-        if (currentUser.role !== 'admin' && item.visibility && !APP.settings[item.visibility]) return;
-        const link = document.createElement('div');
-        link.className = `sidebar-link ${currentPage===item.id?'active':''}`;
-        link.innerHTML = `<i class="fas ${item.icon}"></i><span>${item.label}</span>`;
-        link.onclick = () => { navigateTo(item.id); if(window.innerWidth<768) toggleSidebar(); };
-        nav.appendChild(link);
-    });
+// Mock notifications
+const notifications = [
+  { id: 1, type: 'warning', icon: 'fa-exclamation-circle', title: 'High Consumption Alert', message: 'Your usage today is 40% higher than your daily average. Consider turning off unused appliances.', time: '2 hours ago', read: false },
+  { id: 2, type: 'bill', icon: 'fa-file-invoice-dollar', title: 'January Bill Generated', message: 'Your electricity bill for January 2025 is INR 2,340.00. Due date: 15 Jan 2025.', time: '1 day ago', read: false },
+  { id: 3, type: 'outage', icon: 'fa-power-off', title: 'Brief Power Interruption', message: 'A 12-minute power interruption was detected at your location on 08 Jan between 3:42 PM - 3:54 PM.', time: '2 days ago', read: false },
+  { id: 4, type: 'info', icon: 'fa-check-circle', title: 'December Bill Paid', message: 'Payment of INR 2,568.00 for December 2024 bill confirmed via UPI. Transaction ID: TXN-2024-938201.', time: '18 Dec 2024', read: true },
+  { id: 5, type: 'info', icon: 'fa-wifi', title: 'Meter Reconnected', message: 'Your smart meter SM-4821 has reconnected to Wi-Fi successfully after a firmware update.', time: '10 Dec 2024', read: true },
+  { id: 6, type: 'success', icon: 'fa-tools', title: 'Complaint Resolved', message: 'Your complaint #CMP-0842 regarding voltage fluctuation has been resolved by the service team.', time: '05 Dec 2024', read: true },
+];
+
+// Mock complaints
+const complaints = [
+  { id: 'CMP-0842', category: 'Voltage Fluctuation', desc: 'Frequent voltage drops in evening hours causing LED lights to flicker.', priority: 'medium', status: 'resolved', date: '02 Dec 2024', location: 'Sector 15, Vasundhara' },
+  { id: 'CMP-0791', category: 'Meter Fault', desc: 'Meter display showing garbled characters after rain. Physical inspection needed.', priority: 'high', status: 'in-progress', date: '28 Nov 2024', location: 'Sector 15, Vasundhara' },
+  { id: 'CMP-0654', category: 'Power Outage', desc: 'Unscheduled power cut lasting 3 hours during daytime.', priority: 'high', status: 'resolved', date: '15 Nov 2024', location: 'Sector 15, Vasundhara' },
+];
+
+// Mock transactions
+const transactions = [
+  { id: 'TXN-2024-938201', date: '18 Dec 2024', amount: 2568, method: 'UPI', status: 'success' },
+  { id: 'TXN-2024-876543', date: '15 Nov 2024', amount: 2234, method: 'Card', status: 'success' },
+  { id: 'TXN-2024-812345', date: '14 Oct 2024', amount: 2410, method: 'UPI', status: 'success' },
+  { id: 'TXN-2024-765432', date: '14 Sep 2024', amount: 2542, method: 'Net Banking', status: 'success' },
+];
+
+// ==================== AUTH ====================
+
+function handleLogin(e) {
+  e.preventDefault();
+  const phone = document.getElementById('loginPhone').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
+
+  if (!phone || !pass) {
+    showToast('Please enter phone number and password', 'error');
+    return;
+  }
+
+  // Simulate loading
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i> Signing in...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('appContainer').style.display = 'block';
+    initApp();
+    showToast('Welcome back, Rahul!', 'success');
+    btn.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right:8px;"></i> Sign In';
+    btn.disabled = false;
+  }, 1200);
 }
 
+function handleLogout() {
+  document.getElementById('appContainer').style.display = 'none';
+  document.getElementById('loginPage').style.display = 'flex';
+  showToast('Signed out successfully', 'info');
+}
+
+function togglePassVisibility() {
+  const inp = document.getElementById('loginPass');
+  const icon = document.getElementById('passEyeIcon');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    icon.className = 'fas fa-eye-slash';
+  } else {
+    inp.type = 'password';
+    icon.className = 'fas fa-eye';
+  }
+}
+
+// ==================== NAVIGATION ====================
+
+const pageTitles = {
+  dashboard: 'Dashboard',
+  monitoring: 'Detailed Monitoring',
+  billing: 'Billing History',
+  payment: 'Pay Bill',
+  notifications: 'Notifications',
+  complaints: 'Helpline & Complaints',
+  profile: 'Account Settings'
+};
+
 function navigateTo(page) {
-    currentPage = page;
-    buildSidebar();
-    const titles = { dashboard:'Dashboard', meetings:'Meetings & Events', offerings:'Offerings', expenses:'Expenses', bank:'Bank Report', settings:'Settings' };
-    document.getElementById('pageTitle').textContent = titles[page] || 'Dashboard';
-    // Close notif dropdown
-    document.getElementById('notifDropdown').classList.remove('show');
-    // Render page
-    const content = document.getElementById('pageContent');
-    content.innerHTML = '';
-    content.className = 'p-6 page-content';
-    switch(page) {
-        case 'dashboard': renderDashboard(content); break;
-        case 'meetings': renderMeetings(content); break;
-        case 'offerings': renderOfferings(content); break;
-        case 'expenses': renderExpenses(content); break;
-        case 'bank': renderBank(content); break;
-        case 'settings': renderSettings(content); break;
-    }
+  // Update sidebar active
+  document.querySelectorAll('.sidebar-link').forEach(link => {
+    link.classList.toggle('active', link.dataset.page === page);
+  });
+  // Update page visibility
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.toggle('active', p.id === `page-${page}`);
+  });
+  // Update title
+  document.getElementById('pageTitle').textContent = pageTitles[page] || 'Dashboard';
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+
+  // Initialize page-specific content
+  if (page === 'monitoring') initMonitoringPage();
+  if (page === 'billing') initBillingPage();
+  if (page === 'notifications') renderNotifications();
+  if (page === 'complaints') renderComplaints();
 }
 
 function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('sidebarOverlay').classList.toggle('show');
+  document.getElementById('sidebar').classList.toggle('open');
 }
 
-/* ========================================================================
-   NOTIFICATION SYSTEM
-   ======================================================================== */
-function addNotification(title, message) {
-    const n = { id: genId(), title, message, time: new Date().toISOString(), read: false };
-    APP.notifications.unshift(n);
-    if (APP.notifications.length > 50) APP.notifications = APP.notifications.slice(0,50);
-    saveData(APP);
-    updateNotifBadge();
-    sendBrowserNotif(title, message);
+// ==================== TOAST ====================
+
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const icons = { success: 'fa-check-circle', error: 'fa-times-circle', info: 'fa-info-circle' };
+  toast.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i><span>${message}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(20px)';
+    toast.style.transition = 'all 0.3s ease';
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
 }
-function updateNotifBadge() {
-    const unread = APP.notifications.filter(n => !n.read).length;
-    const badge = document.getElementById('notifBadge');
-    if (unread > 0) { badge.textContent = unread > 9 ? '9+' : unread; badge.classList.remove('hidden'); badge.classList.add('flex'); }
-    else { badge.classList.add('hidden'); badge.classList.remove('flex'); }
+
+// ==================== CHARTS ====================
+
+let liveChart, weeklyChart, applianceChart, hourlyChart, billTrendChart;
+let liveData = [];
+let liveLabels = [];
+
+function generateTimeLabels(count) {
+  const labels = [];
+  const now = new Date();
+  for (let i = count - 1; i >= 0; i--) {
+    const t = new Date(now - i * 60000);
+    labels.push(t.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }));
+  }
+  return labels;
 }
-function toggleNotifDropdown() {
-    document.getElementById('notifDropdown').classList.toggle('show');
-    renderNotifList();
-}
-function renderNotifList() {
-    const list = document.getElementById('notifList');
-    if (APP.notifications.length === 0) {
-        list.innerHTML = '<div class="p-6 text-center text-gray-400 text-sm">No notifications yet</div>';
-        return;
+
+function initLiveChart() {
+  liveLabels = generateTimeLabels(30);
+  liveData = liveLabels.map(() => (Math.random() * 1.5 + 0.8).toFixed(2));
+
+  const ctx = document.getElementById('liveChart').getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, 0, 280);
+  gradient.addColorStop(0, 'rgba(0,230,138,0.25)');
+  gradient.addColorStop(1, 'rgba(0,230,138,0.0)');
+
+  liveChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: liveLabels,
+      datasets: [{
+        label: 'Power (kW)',
+        data: liveData,
+        borderColor: '#00e68a',
+        backgroundColor: gradient,
+        fill: true,
+        tension: 0.4,
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: '#00e68a',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0f1f18',
+          borderColor: '#1a3328',
+          borderWidth: 1,
+          titleColor: '#e0f2e9',
+          bodyColor: '#00e68a',
+          bodyFont: { family: 'JetBrains Mono' },
+          padding: 12,
+          cornerRadius: 8
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(0,230,138,0.05)' },
+          ticks: { color: '#3d6b52', font: { size: 10, family: 'JetBrains Mono' }, maxTicksLimit: 8 }
+        },
+        y: {
+          grid: { color: 'rgba(0,230,138,0.05)' },
+          ticks: { color: '#3d6b52', font: { size: 10, family: 'JetBrains Mono' }, callback: v => v + ' kW' },
+          min: 0
+        }
+      },
+      interaction: { intersect: false, mode: 'index' }
     }
-    list.innerHTML = APP.notifications.slice(0,15).map(n => `
-        <div class="flex gap-3 p-4 border-b border-cream-200 hover:bg-cream-50 transition cursor-pointer ${n.read?'opacity-60':''}" onclick="markRead('${n.id}')">
-            <div class="w-8 h-8 rounded-full ${n.read?'bg-gray-100':'bg-pri-50'} flex items-center justify-center flex-shrink-0 mt-0.5">
-                <i class="fas fa-bell text-xs ${n.read?'text-gray-400':'text-pri-500'}"></i>
-            </div>
-            <div class="min-w-0">
-                <p class="text-sm font-600 text-gray-800 truncate">${n.title}</p>
-                <p class="text-xs text-gray-500 mt-0.5 line-clamp-2">${n.message}</p>
-                <p class="text-xs text-gray-400 mt-1">${fmtTime(n.time)}</p>
-            </div>
+  });
+}
+
+function updateLiveChart() {
+  const newVal = (Math.random() * 1.5 + 0.8).toFixed(2);
+  liveData.push(newVal);
+  liveData.shift();
+  const now = new Date();
+  liveLabels.push(now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }));
+  liveLabels.shift();
+  liveChart.update('none');
+
+  // Update meter display with simulated values
+  document.getElementById('meterReading').textContent = (parseFloat(document.getElementById('meterReading').textContent) + Math.random() * 0.002).toFixed(2);
+  document.getElementById('meterVoltage').textContent = (228 + Math.random() * 4).toFixed(0);
+  document.getElementById('meterCurrent').textContent = (3.5 + Math.random() * 2).toFixed(1);
+  document.getElementById('meterPF').textContent = (0.93 + Math.random() * 0.06).toFixed(2);
+  document.getElementById('todayUsage').textContent = (parseFloat(document.getElementById('todayUsage').textContent) + Math.random() * 0.01).toFixed(1);
+  document.getElementById('currentLoad').textContent = newVal;
+}
+
+function initWeeklyChart() {
+  const ctx = document.getElementById('weeklyChart').getContext('2d');
+  weeklyChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      datasets: [{
+        label: 'kWh',
+        data: [11.2, 13.8, 10.5, 14.2, 12.9, 16.1, 12.4],
+        backgroundColor: [
+          'rgba(0,230,138,0.6)', 'rgba(0,230,138,0.6)', 'rgba(0,230,138,0.6)',
+          'rgba(245,166,35,0.6)', 'rgba(0,230,138,0.6)', 'rgba(255,71,87,0.6)', 'rgba(0,230,138,0.6)'
+        ],
+        borderRadius: 6,
+        borderSkipped: false,
+        maxBarThickness: 40
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0f1f18',
+          borderColor: '#1a3328',
+          borderWidth: 1,
+          titleColor: '#e0f2e9',
+          bodyColor: '#00e68a',
+          bodyFont: { family: 'JetBrains Mono' },
+          padding: 10,
+          cornerRadius: 8
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#3d6b52', font: { size: 12 } } },
+        y: { grid: { color: 'rgba(0,230,138,0.05)' }, ticks: { color: '#3d6b52', font: { size: 10, family: 'JetBrains Mono' }, callback: v => v + ' kWh' } }
+      }
+    }
+  });
+}
+
+function initApplianceChart() {
+  const ctx = document.getElementById('applianceChart').getContext('2d');
+  applianceChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['AC', 'Fridge', 'Lights', 'Geyser', 'Others'],
+      datasets: [{
+        data: [38, 22, 15, 18, 7],
+        backgroundColor: ['#00e68a', '#f5a623', '#3b82f6', '#ff4757', '#6b9b82'],
+        borderColor: '#0f1f18',
+        borderWidth: 3,
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { color: '#6b9b82', font: { size: 12 }, padding: 12, usePointStyle: true, pointStyleWidth: 10 }
+        },
+        tooltip: {
+          backgroundColor: '#0f1f18',
+          borderColor: '#1a3328',
+          borderWidth: 1,
+          titleColor: '#e0f2e9',
+          bodyColor: '#00e68a',
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}%` }
+        }
+      }
+    }
+  });
+}
+
+function setChartRange(btn, range) {
+  btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Regenerate chart data based on range (simulation)
+  const counts = { '1h': 30, '6h': 36, '24h': 48 };
+  const count = counts[range] || 30;
+  liveLabels = generateTimeLabels(count);
+  liveData = liveLabels.map(() => (Math.random() * 1.5 + 0.8).toFixed(2));
+  liveChart.data.labels = liveLabels;
+  liveChart.data.datasets[0].data = liveData;
+  liveChart.update();
+}
+
+// ==================== MONITORING PAGE ====================
+
+function initMonitoringPage() {
+  // Hourly chart
+  const hourlyCtx = document.getElementById('hourlyChart').getContext('2d');
+  if (hourlyChart) hourlyChart.destroy();
+
+  const hourlyData = [0.3,0.2,0.2,0.3,0.5,0.8,1.2,1.8,2.1,2.4,2.0,1.8,2.2,2.8,3.5,3.8,3.2,2.9,2.5,2.1,1.8,1.4,0.9,0.5];
+  const hourLabels = Array.from({length:24}, (_,i) => `${i.toString().padStart(2,'0')}:00`);
+
+  const hGrad = hourlyCtx.createLinearGradient(0, 0, 0, 300);
+  hGrad.addColorStop(0, 'rgba(245,166,35,0.3)');
+  hGrad.addColorStop(1, 'rgba(245,166,35,0.0)');
+
+  hourlyChart = new Chart(hourlyCtx, {
+    type: 'line',
+    data: {
+      labels: hourLabels,
+      datasets: [{
+        label: 'Power (kW)',
+        data: hourlyData,
+        borderColor: '#f5a623',
+        backgroundColor: hGrad,
+        fill: true,
+        tension: 0.3,
+        pointRadius: 3,
+        pointBackgroundColor: '#f5a623',
+        pointBorderColor: '#0f1f18',
+        pointBorderWidth: 2,
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0f1f18', borderColor: '#1a3328', borderWidth: 1,
+          titleColor: '#e0f2e9', bodyColor: '#f5a623',
+          bodyFont: { family: 'JetBrains Mono' }, padding: 10, cornerRadius: 8
+        }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(245,166,35,0.05)' }, ticks: { color: '#3d6b52', font: { size: 10, family: 'JetBrains Mono' }, maxTicksLimit: 12 } },
+        y: { grid: { color: 'rgba(245,166,35,0.05)' }, ticks: { color: '#3d6b52', font: { size: 10, family: 'JetBrains Mono' }, callback: v => v + ' kW' }, min: 0 }
+      },
+      interaction: { intersect: false, mode: 'index' }
+    }
+  });
+
+  // Consumption log
+  const tbody = document.getElementById('consumptionLog');
+  tbody.innerHTML = '';
+  const now = new Date();
+  for (let i = 0; i < 12; i++) {
+    const t = new Date(now - i * 300000);
+    const v = (228 + Math.random() * 4).toFixed(1);
+    const c = (3 + Math.random() * 2).toFixed(2);
+    const p = (v * c / 1000).toFixed(3);
+    const u = (p * 5 / 60).toFixed(4);
+    const status = Math.random() > 0.1 ? 'normal' : 'alert';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="mono" style="font-size:12px;">${t.toLocaleTimeString('en-IN')}</td>
+      <td class="mono">${v}</td>
+      <td class="mono">${c}</td>
+      <td class="mono" style="color:${parseFloat(p)>3?'var(--danger)':'var(--primary)'}">${p}</td>
+      <td class="mono">${u}</td>
+      <td><span class="badge ${status==='normal'?'badge-success':'badge-danger'}">${status==='normal'?'Normal':'High'}</span></td>
+    `;
+    tbody.appendChild(tr);
+  }
+}
+
+function setMonitorTab(btn, tab) {
+  btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  showToast(`Showing ${tab} data`, 'info');
+}
+
+// ==================== BILLING PAGE ====================
+
+function initBillingPage() {
+  // Bill trend chart
+  const ctx = document.getElementById('billTrendChart').getContext('2d');
+  if (billTrendChart) billTrendChart.destroy();
+
+  billTrendChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'],
+      datasets: [
+        {
+          label: 'Units (kWh)',
+          data: [345.6, 310.2, 295.8, 278.1, 312.4, 287.6],
+          backgroundColor: 'rgba(0,230,138,0.5)',
+          borderRadius: 6,
+          maxBarThickness: 30,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Amount (INR)',
+          data: [2890, 2542, 2410, 2234, 2568, 2340],
+          type: 'line',
+          borderColor: '#f5a623',
+          backgroundColor: 'transparent',
+          pointBackgroundColor: '#f5a623',
+          pointBorderColor: '#0f1f18',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          tension: 0.3,
+          borderWidth: 2,
+          yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: { color: '#6b9b82', font: { size: 12 }, usePointStyle: true, pointStyleWidth: 10, padding: 16 }
+        },
+        tooltip: {
+          backgroundColor: '#0f1f18', borderColor: '#1a3328', borderWidth: 1,
+          titleColor: '#e0f2e9', bodyFont: { family: 'JetBrains Mono' }, padding: 10, cornerRadius: 8
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#3d6b52', font: { size: 12 } } },
+        y: { position: 'left', grid: { color: 'rgba(0,230,138,0.05)' }, ticks: { color: '#3d6b52', font: { size: 10, family: 'JetBrains Mono' }, callback: v => v + ' kWh' } },
+        y1: { position: 'right', grid: { display: false }, ticks: { color: '#3d6b52', font: { size: 10, family: 'JetBrains Mono' }, callback: v => 'Rs ' + v } }
+      }
+    }
+  });
+
+  // Bill history table
+  const tbody = document.getElementById('billHistory');
+  tbody.innerHTML = '';
+  billHistory.forEach(bill => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="mono" style="font-size:13px;">${bill.id}</td>
+      <td>${bill.period}</td>
+      <td class="mono">${bill.units}</td>
+      <td class="mono" style="font-weight:600;">${bill.amount.toLocaleString()}</td>
+      <td>${bill.due}</td>
+      <td><span class="badge ${bill.status==='paid'?'badge-success':'badge-warning'}">${bill.status==='paid'?'Paid':'Pending'}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ==================== PAYMENT ====================
+
+let selectedPayMethod = 'upi';
+
+function selectPaymentMethod(el, method) {
+  selectedPayMethod = method;
+  document.querySelectorAll('.payment-method').forEach(pm => {
+    pm.style.borderColor = 'var(--border)';
+    pm.querySelector('i').style.color = 'var(--text-muted)';
+    pm.classList.remove('active');
+  });
+  el.style.borderColor = 'var(--primary)';
+  el.querySelector('i').style.color = 'var(--primary)';
+  el.classList.add('active');
+
+  document.getElementById('payMethod-upi').style.display = method === 'upi' ? 'block' : 'none';
+  document.getElementById('payMethod-card').style.display = method === 'card' ? 'block' : 'none';
+  document.getElementById('payMethod-netbanking').style.display = method === 'netbanking' ? 'block' : 'none';
+}
+
+function selectBank(el) {
+  document.querySelectorAll('.bank-option').forEach(b => b.style.borderColor = 'var(--border)');
+  el.style.borderColor = 'var(--primary)';
+}
+
+function processPayment() {
+  const methodNames = { upi: 'UPI', card: 'Credit/Debit Card', netbanking: 'Net Banking' };
+  document.getElementById('modalPayMethod').textContent = methodNames[selectedPayMethod];
+  document.getElementById('modalPayTime').textContent = new Date().toLocaleString('en-IN');
+
+  const modal = document.getElementById('paymentModal');
+  modal.style.display = 'flex';
+  showToast('Payment processed successfully!', 'success');
+}
+
+function renderTransactions() {
+  const list = document.getElementById('transactionList');
+  list.innerHTML = '';
+  transactions.forEach(tx => {
+    list.innerHTML += `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(0,230,138,0.1);display:flex;align-items:center;justify-content:center;">
+            <i class="fas fa-check" style="color:var(--primary);font-size:14px;"></i>
+          </div>
+          <div>
+            <div style="font-size:14px;font-weight:500;">Bill Payment</div>
+            <div class="mono" style="font-size:11px;color:var(--text-dim);">${tx.id}</div>
+          </div>
         </div>
-    `).join('');
+        <div style="text-align:right;">
+          <div class="mono" style="font-size:14px;font-weight:600;color:var(--primary);">-INR ${tx.amount.toLocaleString()}</div>
+          <div style="font-size:11px;color:var(--text-dim);">${tx.date} &bull; ${tx.method}</div>
+        </div>
+      </div>
+    `;
+  });
 }
-function markRead(id) {
-    const n = APP.notifications.find(x => x.id === id);
-    if (n) { n.read = true; saveData(APP); updateNotifBadge(); renderNotifList(); }
+
+// ==================== NOTIFICATIONS ====================
+
+function renderNotifications() {
+  const list = document.getElementById('notificationsList');
+  list.innerHTML = '';
+  notifications.forEach(n => {
+    const colors = {
+      warning: { bg: 'rgba(245,166,35,0.08)', border: 'rgba(245,166,35,0.2)', icon: 'var(--accent)' },
+      bill: { bg: 'rgba(59,130,246,0.08)', border: 'rgba(59,130,246,0.2)', icon: '#3b82f6' },
+      outage: { bg: 'rgba(255,71,87,0.08)', border: 'rgba(255,71,87,0.2)', icon: 'var(--danger)' },
+      info: { bg: 'rgba(0,230,138,0.05)', border: 'rgba(0,230,138,0.15)', icon: 'var(--primary)' },
+      success: { bg: 'rgba(0,230,138,0.08)', border: 'rgba(0,230,138,0.2)', icon: 'var(--primary)' },
+    };
+    const c = colors[n.type] || colors.info;
+    list.innerHTML += `
+      <div style="background:${n.read ? 'var(--bg-card)' : c.bg};border:1px solid ${n.read ? 'var(--border)' : c.border};border-radius:10px;padding:18px;display:flex;gap:14px;transition:all 0.2s;cursor:pointer;" ${!n.read ? 'onmouseover="this.style.background=\''+c.bg.replace('0.08','0.12')+'\'" onmouseout="this.style.background=\''+c.bg+'\'"' : ''}>
+        <div style="width:40px;height:40px;border-radius:10px;background:${c.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid ${c.border};">
+          <i class="fas ${n.icon}" style="color:${c.icon};font-size:14px;"></i>
+        </div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <span style="font-size:14px;font-weight:600;">${n.title}</span>
+            ${!n.read ? '<div style="width:6px;height:6px;border-radius:50%;background:var(--primary);"></div>' : ''}
+          </div>
+          <p style="font-size:13px;color:var(--text-muted);line-height:1.5;">${n.message}</p>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:6px;">
+            <i class="fas fa-clock" style="margin-right:4px;"></i>${n.time}
+          </div>
+        </div>
+      </div>
+    `;
+  });
 }
+
 function markAllRead() {
-    APP.notifications.forEach(n => n.read = true);
-    saveData(APP);
-    updateNotifBadge();
-    renderNotifList();
-    showToast('All notifications marked as read', 'info');
+  notifications.forEach(n => n.read = true);
+  renderNotifications();
+  document.getElementById('notifBadge').style.display = 'none';
+  document.querySelectorAll('.notif-badge').forEach(b => b.style.display = 'none');
+  showToast('All notifications marked as read', 'success');
 }
-// Close notif dropdown on outside click
-document.addEventListener('click', e => {
-    if (!document.getElementById('notifWrapper').contains(e.target)) {
-        document.getElementById('notifDropdown').classList.remove('show');
-    }
+
+// ==================== COMPLAINTS ====================
+
+function renderComplaints() {
+  const list = document.getElementById('complaintsList');
+  list.innerHTML = '';
+  complaints.forEach(c => {
+    const statusColors = {
+      'resolved': { bg: 'badge-success', text: 'Resolved' },
+      'in-progress': { bg: 'badge-warning', text: 'In Progress' },
+      'pending': { bg: 'badge-info', text: 'Pending' }
+    };
+    const s = statusColors[c.status] || statusColors.pending;
+    list.innerHTML += `
+      <div style="background:var(--bg-deep);border:1px solid var(--border);border-radius:10px;padding:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="mono" style="font-size:12px;color:var(--text-dim);">${c.id}</span>
+            <span class="badge ${s.bg}">${s.text}</span>
+          </div>
+          <span style="font-size:11px;color:var(--text-dim);">${c.date}</span>
+        </div>
+        <div style="font-size:14px;font-weight:500;margin-bottom:4px;">${c.category}</div>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.4;margin-bottom:8px;">${c.desc}</p>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);">
+          <i class="fas fa-map-marker-alt" style="color:var(--danger);"></i>
+          ${c.location}
+        </div>
+      </div>
+    `;
+  });
+}
+
+function submitComplaint(e) {
+  e.preventDefault();
+  const category = document.getElementById('complaintCategory').value;
+  const desc = document.getElementById('complaintDesc').value;
+
+  if (!category) {
+    showToast('Please select an issue category', 'error');
+    return;
+  }
+  if (!desc.trim()) {
+    showToast('Please describe your issue', 'error');
+    return;
+  }
+
+  const categoryNames = {
+    power_outage: 'Power Outage',
+    meter_fault: 'Meter Fault / Damage',
+    billing_error: 'Billing Error',
+    voltage_fluctuation: 'Voltage Fluctuation',
+    wiring_issue: 'Wiring Issue',
+    other: 'Other'
+  };
+
+  const priority = document.querySelector('input[name="priority"]:checked').value;
+  const newComplaint = {
+    id: `CMP-${String(Math.floor(Math.random() * 9000) + 1000)}`,
+    category: categoryNames[category],
+    desc: desc.trim(),
+    priority: priority,
+    status: 'pending',
+    date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+    location: 'Sector 15, Vasundhara'
+  };
+
+  complaints.unshift(newComplaint);
+  renderComplaints();
+
+  // Reset form
+  document.getElementById('complaintCategory').value = '';
+  document.getElementById('complaintDesc').value = '';
+
+  showToast(`Complaint ${newComplaint.id} filed successfully!`, 'success');
+}
+
+// ==================== PROFILE ====================
+
+function updateProfile(e) {
+  e.preventDefault();
+  showToast('Profile updated successfully!', 'success');
+}
+
+// ==================== CLOCK ====================
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('liveTime').textContent = now.toLocaleTimeString('en-IN');
+}
+
+// ==================== INIT APP ====================
+
+function initApp() {
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // Initialize dashboard charts
+  initLiveChart();
+  initWeeklyChart();
+  initApplianceChart();
+
+  // Update live data every 3 seconds
+  setInterval(updateLiveChart, 3000);
+
+  // Render transactions
+  renderTransactions();
+}
+
+// Close sidebar on clicking outside on mobile
+document.addEventListener('click', (e) => {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.querySelector('.mobile-toggle');
+  if (sidebar && sidebar.classList.contains('open') && !sidebar.contains(e.target) && !toggle.contains(e.target)) {
+    sidebar.classList.remove('open');
+  }
 });
 
-/* ========================================================================
-   MODAL SYSTEM
-   ======================================================================== */
-function openModal(title, bodyHTML) {
-    document.getElementById('modalTitle').textContent = title;
-    document.getElementById('modalBody').innerHTML = bodyHTML;
-    document.getElementById('modalOverlay').classList.add('show');
-}
-function closeModal() {
-    document.getElementById('modalOverlay').classList.remove('show');
-}
-
-/* ========================================================================
-   DASHBOARD
-   ======================================================================== */
-function renderDashboard(container) {
-    const mOfferings = getCurrentMonthItems(APP.offerings);
-    const mExpenses = getCurrentMonthItems(APP.expenses);
-    const totalOfferings = sumField(mOfferings, 'amount');
-    const totalExpenses = sumField(mExpenses, 'amount');
-    // Bank balance: sum deposits - sum withdrawals
-    const bankBalance = sumField(APP.bankTransactions.filter(t=>t.type==='Deposit'),'amount')
-                      - sumField(APP.bankTransactions.filter(t=>t.type==='Withdrawal'),'amount');
-    const mMeetings = APP.meetings.length;
-
-    container.innerHTML = `
-        <!-- Welcome Banner -->
-        <div class="card mb-6 bg-gradient-to-r from-pri-500 to-pri-400 text-white border-0 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-            <div class="absolute bottom-0 left-1/2 w-60 h-60 bg-white/5 rounded-full translate-y-1/2"></div>
-            <div class="relative">
-                <p class="text-pri-200 text-sm font-500 mb-1">${new Date().toLocaleDateString('en-IN',{weekday:'long'})}</p>
-                <h2 class="font-display text-2xl font-700 mb-1">Welcome, ${currentUser.name}</h2>
-                <p class="text-pri-100 text-sm">Here's an overview of ${APP.settings.churchName}</p>
-            </div>
-        </div>
-
-        <!-- Stat Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div class="card stat-card green">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 rounded-lg bg-pri-50 flex items-center justify-center">
-                        <i class="fas fa-hand-holding-heart text-pri-500"></i>
-                    </div>
-                    <span class="text-sm text-gray-500 font-500">This Month Offerings</span>
-                </div>
-                <p class="text-2xl font-700 text-pri-500">${fmtCurrency(totalOfferings)}</p>
-                <p class="text-xs text-gray-400 mt-1">${mOfferings.length} entries</p>
-            </div>
-            <div class="card stat-card red">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
-                        <i class="fas fa-receipt text-red-500"></i>
-                    </div>
-                    <span class="text-sm text-gray-500 font-500">This Month Expenses</span>
-                </div>
-                <p class="text-2xl font-700 text-red-600">${fmtCurrency(totalExpenses)}</p>
-                <p class="text-xs text-gray-400 mt-1">${mExpenses.length} entries</p>
-            </div>
-            <div class="card stat-card gold">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 rounded-lg bg-gold-50 flex items-center justify-center">
-                        <i class="fas fa-university text-gold-500"></i>
-                    </div>
-                    <span class="text-sm text-gray-500 font-500">Bank Balance</span>
-                </div>
-                <p class="text-2xl font-700 text-gold-600">${fmtCurrency(bankBalance)}</p>
-                <p class="text-xs text-gray-400 mt-1">${APP.bankTransactions.length} transactions</p>
-            </div>
-            <div class="card stat-card blue">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
-                        <i class="fas fa-calendar-alt text-blue-500"></i>
-                    </div>
-                    <span class="text-sm text-gray-500 font-500">Upcoming Meetings</span>
-                </div>
-                <p class="text-2xl font-700 text-blue-600">${mMeetings}</p>
-                <p class="text-xs text-gray-400 mt-1">Active announcements</p>
-            </div>
-        </div>
-
-        <!-- Chart & Recent -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="card lg:col-span-2">
-                <h3 class="font-display font-700 mb-4">Monthly Overview</h3>
-                <div style="height:280px;"><canvas id="dashChart"></canvas></div>
-            </div>
-            <div class="card">
-                <h3 class="font-display font-700 mb-4">Recent Meetings</h3>
-                <div class="space-y-3">
-                    ${APP.meetings.slice(0,4).map(m => `
-                        <div class="flex gap-3 items-start">
-                            <div class="w-10 h-10 rounded-lg bg-pri-50 flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-calendar-day text-pri-500 text-sm"></i>
-                            </div>
-                            <div class="min-w-0">
-                                <p class="text-sm font-600 truncate">${m.title}</p>
-                                <p class="text-xs text-gray-400">${fmtDateDisplay(m.date)}</p>
-                            </div>
-                        </div>
-                    `).join('')}
-                    ${APP.meetings.length===0?'<p class="text-sm text-gray-400">No meetings posted yet</p>':''}
-                </div>
-            </div>
-        </div>
-
-        ${currentUser.role==='admin'?`
-        <!-- Quick Actions -->
-        <div class="mt-6">
-            <h3 class="font-display font-700 mb-4">Quick Actions</h3>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <button onclick="navigateTo('meetings');setTimeout(()=>openMeetingModal(),100)" class="card flex flex-col items-center gap-2 py-5 hover:border-pri-300 cursor-pointer text-center">
-                    <i class="fas fa-plus-circle text-xl text-pri-500"></i>
-                    <span class="text-sm font-600">New Meeting</span>
-                </button>
-                <button onclick="navigateTo('offerings');setTimeout(()=>openOfferingModal(),100)" class="card flex flex-col items-center gap-2 py-5 hover:border-gold-300 cursor-pointer text-center">
-                    <i class="fas fa-hand-holding-usd text-xl text-gold-500"></i>
-                    <span class="text-sm font-600">Add Offering</span>
-                </button>
-                <button onclick="navigateTo('expenses');setTimeout(()=>openExpenseModal(),100)" class="card flex flex-col items-center gap-2 py-5 hover:border-red-300 cursor-pointer text-center">
-                    <i class="fas fa-file-invoice-dollar text-xl text-red-500"></i>
-                    <span class="text-sm font-600">Add Expense</span>
-                </button>
-                <button onclick="navigateTo('bank');setTimeout(()=>openBankModal(),100)" class="card flex flex-col items-center gap-2 py-5 hover:border-blue-300 cursor-pointer text-center">
-                    <i class="fas fa-exchange-alt text-xl text-blue-500"></i>
-                    <span class="text-sm font-600">Bank Entry</span>
-                </button>
-            </div>
-        </div>
-        `:''}
-    `;
-    renderDashChart();
-}
-
-function renderDashChart() {
-    const canvas = document.getElementById('dashChart');
-    if (!canvas) return;
-    if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
-    // Build last 6 months data
-    const labels = [], offerData = [], expData = [];
-    for (let i = 5; i >= 0; i--) {
-        const d = new Date(); d.setMonth(d.getMonth()-i);
-        const y = d.getFullYear(), m = d.getMonth();
-        labels.push(d.toLocaleDateString('en-IN',{month:'short',year:'2-digit'}));
-        offerData.push(sumField(APP.offerings.filter(o => { const od=new Date(o.date+'T00:00:00'); return od.getFullYear()===y&&od.getMonth()===m; }),'amount'));
-        expData.push(sumField(APP.expenses.filter(e => { const ed=new Date(e.date+'T00:00:00'); return ed.getFullYear()===y&&ed.getMonth()===m; }),'amount'));
-    }
-    chartInstance = new Chart(canvas, {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [
-                { label:'Offerings', data:offerData, backgroundColor:'rgba(27,67,50,0.8)', borderRadius:6, barPercentage:0.4 },
-                { label:'Expenses', data:expData, backgroundColor:'rgba(212,168,67,0.8)', borderRadius:6, barPercentage:0.4 }
-            ]
-        },
-        options: {
-            responsive:true, maintainAspectRatio:false,
-            plugins:{ legend:{ position:'bottom', labels:{ usePointStyle:true, padding:16, font:{family:'Source Sans 3'} } } },
-            scales:{
-                y:{ beginAtZero:true, ticks:{ callback:v=>'₹'+v.toLocaleString('en-IN'), font:{family:'Source Sans 3'} }, grid:{color:'rgba(0,0,0,0.04)'} },
-                x:{ ticks:{font:{family:'Source Sans 3'}}, grid:{display:false} }
-            }
-        }
-    });
-}
-
-/* ========================================================================
-   MEETINGS PAGE
-   ======================================================================== */
-function renderMeetings(container) {
-    const sorted = [...APP.meetings].sort((a,b) => new Date(b.date)-new Date(a.date));
-    container.innerHTML = `
-        <div class="flex items-center justify-between mb-6">
-            <p class="text-sm text-gray-500">${sorted.length} meeting${sorted.length!==1?'s':''} posted</p>
-            ${currentUser.role==='admin'?`<button class="btn-primary" onclick="openMeetingModal()"><i class="fas fa-plus mr-2"></i>New Meeting</button>`:''}
-        </div>
-        ${sorted.length===0?`
-            <div class="empty-state"><i class="fas fa-calendar-plus block"></i><p class="text-lg font-600 mb-1">No meetings yet</p><p class="text-sm">Admin can post new meetings and events here.</p></div>
-        `:`
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                ${sorted.map(m => {
-                    const isPast = new Date(m.date+'T23:59:59') < new Date();
-                    const isToday = m.date === fmtDate(new Date());
-                    return `
-                    <div class="card relative">
-                        ${isToday?'<div class="absolute top-4 right-4"><span class="badge badge-green">Today</span></div>':''}
-                        ${isPast&&!isToday?'<div class="absolute top-4 right-4"><span class="badge badge-gold">Past</span></div>':''}
-                        <div class="flex gap-4">
-                            <div class="w-14 h-14 rounded-xl bg-pri-50 flex flex-col items-center justify-center flex-shrink-0">
-                                <span class="text-lg font-700 text-pri-500 leading-none">${new Date(m.date+'T00:00:00').getDate()}</span>
-                                <span class="text-xs text-pri-400 font-600">${new Date(m.date+'T00:00:00').toLocaleDateString('en-IN',{month:'short'})}</span>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-display font-700 text-base mb-1">${m.title}</h3>
-                                <p class="text-sm text-gray-500 leading-relaxed">${m.description}</p>
-                                <p class="text-xs text-gray-400 mt-2"><i class="far fa-clock mr-1"></i>${fmtDateDisplay(m.date)}</p>
-                            </div>
-                        </div>
-                        ${currentUser.role==='admin'?`
-                        <div class="flex gap-2 mt-4 pt-3 border-t border-cream-200">
-                            <button class="btn-outline btn-sm" onclick="openMeetingModal('${m.id}')"><i class="fas fa-edit mr-1"></i>Edit</button>
-                            <button class="btn-danger btn-sm" onclick="deleteMeeting('${m.id}')"><i class="fas fa-trash mr-1"></i>Delete</button>
-                        </div>`:''}
-                    </div>`;
-                }).join('')}
-            </div>
-        `}
-    `;
-}
-
-function openMeetingModal(editId) {
-    const m = editId ? APP.meetings.find(x=>x.id===editId) : null;
-    openModal(m?'Edit Meeting':'New Meeting', `
-        <div class="form-group">
-            <label class="form-label">Meeting Title</label>
-            <input type="text" id="mTitle" class="form-input" placeholder="e.g. Sunday Worship Service" value="${m?m.title:''}">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Date</label>
-            <input type="date" id="mDate" class="form-input" value="${m?m.date:fmtDate(new Date())}">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Description</label>
-            <textarea id="mDesc" class="form-input" rows="4" placeholder="Meeting details...">${m?m.description:''}</textarea>
-        </div>
-        <button class="btn-primary w-full" onclick="saveMeeting('${editId||''}')">
-            <i class="fas fa-save mr-2"></i>${m?'Update':'Post'} Meeting
-        </button>
-    `);
-}
-function saveMeeting(editId) {
-    const title = document.getElementById('mTitle').value.trim();
-    const date = document.getElementById('mDate').value;
-    const desc = document.getElementById('mDesc').value.trim();
-    if (!title) { showToast('Please enter a meeting title','error'); return; }
-    if (!date) { showToast('Please select a date','error'); return; }
-    if (editId) {
-        const m = APP.meetings.find(x=>x.id===editId);
-        if (m) { m.title=title; m.date=date; m.description=desc; }
-        showToast('Meeting updated successfully');
-    } else {
-        APP.meetings.push({ id:genId(), title, date, description:desc, createdAt:new Date().toISOString() });
-        addNotification('New Meeting Posted', `"${title}" on ${fmtDateDisplay(date)}`);
-        showToast('Meeting posted successfully');
-    }
-    saveData(APP); closeModal(); navigateTo('meetings');
-}
-function deleteMeeting(id) {
-    openModal('Delete Meeting', `
-        <p class="text-gray-600 mb-6">Are you sure you want to delete this meeting? This action cannot be undone.</p>
-        <div class="flex gap-3">
-            <button class="btn-outline flex-1" onclick="closeModal()">Cancel</button>
-            <button class="btn-danger flex-1" onclick="confirmDeleteMeeting('${id}')">Delete</button>
-        </div>
-    `);
-}
-function confirmDeleteMeeting(id) {
-    APP.meetings = APP.meetings.filter(x=>x.id!==id);
-    saveData(APP); closeModal(); navigateTo('meetings');
-    showToast('Meeting deleted','warning');
-}
-
-/* ========================================================================
-   OFFERINGS PAGE
-   ======================================================================== */
-function renderOfferings(container) {
-    const sorted = [...APP.offerings].sort((a,b) => new Date(b.date)-new Date(a.date));
-    const total = sumField(sorted, 'amount');
-    const types = [...new Set(sorted.map(o=>o.type))];
-    container.innerHTML = `
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-            <div>
-                <p class="text-sm text-gray-500">${sorted.length} offering entries</p>
-                <p class="text-lg font-700 text-pri-500">Total: ${fmtCurrency(total)}</p>
-            </div>
-            <div class="flex gap-2">
-                ${currentUser.role==='admin'?`<button class="btn-primary" onclick="openOfferingModal()"><i class="fas fa-plus mr-2"></i>Add Offering</button>`:''}
-                <button class="btn-outline" onclick="printSection('offerings')"><i class="fas fa-print mr-2"></i>Print</button>
-            </div>
-        </div>
-        <div class="card overflow-hidden p-0" id="offerings">
-            ${sorted.length===0?`
-                <div class="empty-state"><i class="fas fa-hand-holding-heart block"></i><p class="text-lg font-600 mb-1">No offerings recorded</p><p class="text-sm">Admin can add offering entries here.</p></div>
-            `:`
-                <div class="overflow-x-auto">
-                    <table class="data-table">
-                        <thead><tr>
-                            <th>Date</th><th>Type</th><th>Description</th><th class="text-right">Amount</th>
-                            ${currentUser.role==='admin'?'<th class="text-right">Actions</th>':''}
-                        </tr></thead>
-                        <tbody>
-                            ${sorted.map(o => `
-                                <tr>
-                                    <td class="whitespace-nowrap">${fmtDateDisplay(o.date)}</td>
-                                    <td><span class="badge badge-green">${o.type}</span></td>
-                                    <td class="text-gray-600 max-w-xs truncate">${o.description||'-'}</td>
-                                    <td class="text-right font-700 text-pri-500 whitespace-nowrap">${fmtCurrency(o.amount)}</td>
-                                    ${currentUser.role==='admin'?`
-                                    <td class="text-right whitespace-nowrap">
-                                        <button class="text-gray-400 hover:text-pri-500 mx-1" onclick="openOfferingModal('${o.id}')"><i class="fas fa-edit"></i></button>
-                                        <button class="text-gray-400 hover:text-red-500 mx-1" onclick="deleteOffering('${o.id}')"><i class="fas fa-trash"></i></button>
-                                    </td>`:''}
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `}
-        </div>
-    `;
-}
-
-function openOfferingModal(editId) {
-    const o = editId ? APP.offerings.find(x=>x.id===editId) : null;
-    const typeOptions = ['Sunday Offering','Tithe','Thanksgiving','Special Offering','Building Fund','Other'];
-    openModal(o?'Edit Offering':'Add Offering', `
-        <div class="form-group">
-            <label class="form-label">Date</label>
-            <input type="date" id="oDate" class="form-input" value="${o?o.date:fmtDate(new Date())}">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Type</label>
-            <select id="oType" class="form-input">
-                ${typeOptions.map(t=>`<option ${o&&o.type===t?'selected':''}>${t}</option>`).join('')}
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="form-label">Amount (₹)</label>
-            <input type="number" id="oAmount" class="form-input" placeholder="0" min="0" value="${o?o.amount:''}">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Description</label>
-            <input type="text" id="oDesc" class="form-input" placeholder="Optional notes" value="${o?o.description:''}">
-        </div>
-        <button class="btn-primary w-full" onclick="saveOffering('${editId||''}')">
-            <i class="fas fa-save mr-2"></i>${o?'Update':'Save'} Offering
-        </button>
-    `);
-}
-function saveOffering(editId) {
-    const date = document.getElementById('oDate').value;
-    const type = document.getElementById('oType').value;
-    const amount = parseFloat(document.getElementById('oAmount').value);
-    const desc = document.getElementById('oDesc').value.trim();
-    if (!date||!amount||amount<=0) { showToast('Please fill date and valid amount','error'); return; }
-    if (editId) {
-        const o = APP.offerings.find(x=>x.id===editId);
-        if (o) { o.date=date; o.type=type; o.amount=amount; o.description=desc; }
-        showToast('Offering updated');
-    } else {
-        APP.offerings.push({ id:genId(), date, type, amount, description:desc, createdAt:new Date().toISOString() });
-        showToast('Offering added successfully');
-    }
-    saveData(APP); closeModal(); navigateTo('offerings');
-}
-function deleteOffering(id) {
-    openModal('Delete Offering', `
-        <p class="text-gray-600 mb-6">Are you sure you want to delete this offering entry?</p>
-        <div class="flex gap-3">
-            <button class="btn-outline flex-1" onclick="closeModal()">Cancel</button>
-            <button class="btn-danger flex-1" onclick="APP.offerings=APP.offerings.filter(x=>x.id!=='${id}');saveData(APP);closeModal();navigateTo('offerings');showToast('Offering deleted','warning');">Delete</button>
-        </div>
-    `);
-}
-
-/* ========================================================================
-   EXPENSES PAGE
-   ======================================================================== */
-const EXPENSE_CATEGORIES = ['Given to Person','Fuel','Food','Building Maintenance','Electricity','Water','Stationery','Travel','Rent','Medical Help','Miscellaneous'];
-
-function renderExpenses(container) {
-    const sorted = [...APP.expenses].sort((a,b) => new Date(b.date)-new Date(a.date));
-    const total = sumField(sorted, 'amount');
-    // Category breakdown
-    const catBreakdown = {};
-    sorted.forEach(e => { catBreakdown[e.category] = (catBreakdown[e.category]||0) + e.amount; });
-
-    container.innerHTML = `
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-            <div>
-                <p class="text-sm text-gray-500">${sorted.length} expense entries</p>
-                <p class="text-lg font-700 text-red-600">Total: ${fmtCurrency(total)}</p>
-            </div>
-            <div class="flex gap-2">
-                ${currentUser.role==='admin'?`<button class="btn-primary" onclick="openExpenseModal()"><i class="fas fa-plus mr-2"></i>Add Expense</button>`:''}
-                <button class="btn-outline" onclick="printSection('expensesSection')"><i class="fas fa-print mr-2"></i>Print</button>
-            </div>
-        </div>
-
-        <!-- Category Breakdown -->
-        ${Object.keys(catBreakdown).length>0?`
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
-            ${Object.entries(catBreakdown).sort((a,b)=>b[1]-a[1]).map(([cat,amt]) => `
-                <div class="card py-3 px-4">
-                    <p class="text-xs text-gray-500 font-500 truncate">${cat}</p>
-                    <p class="text-base font-700 text-red-600">${fmtCurrency(amt)}</p>
-                </div>
-            `).join('')}
-        </div>`:''}
-
-        <div class="card overflow-hidden p-0" id="expensesSection">
-            ${sorted.length===0?`
-                <div class="empty-state"><i class="fas fa-receipt block"></i><p class="text-lg font-600 mb-1">No expenses recorded</p><p class="text-sm">Admin can add expense entries here.</p></div>
-            `:`
-                <div class="overflow-x-auto">
-                    <table class="data-table">
-                        <thead><tr>
-                            <th>Date</th><th>Category</th><th>Description</th>${sorted.some(e=>e.person)?'<th>Person</th>':''}<th class="text-right">Amount</th>
-                            ${currentUser.role==='admin'?'<th class="text-right">Actions</th>':''}
-                        </tr></thead>
-                        <tbody>
-                            ${sorted.map(e => `
-                                <tr>
-                                    <td class="whitespace-nowrap">${fmtDateDisplay(e.date)}</td>
-                                    <td><span class="badge ${e.category==='Given to Person'?'badge-gold':e.category==='Fuel'?'badge-blue':'badge-red'}">${e.category}</span></td>
-                                    <td class="text-gray-600 max-w-xs truncate">${e.description||'-'}</td>
-                                    ${sorted.some(x=>x.person)?`<td class="text-gray-600">${e.person||'-'}</td>`:''}
-                                    <td class="text-right font-700 text-red-600 whitespace-nowrap">${fmtCurrency(e.amount)}</td>
-                                    ${currentUser.role==='admin'?`
-                                    <td class="text-right whitespace-nowrap">
-                                        <button class="text-gray-400 hover:text-pri-500 mx-1" onclick="openExpenseModal('${e.id}')"><i class="fas fa-edit"></i></button>
-                                        <button class="text-gray-400 hover:text-red-500 mx-1" onclick="deleteExpense('${e.id}')"><i class="fas fa-trash"></i></button>
-                                    </td>`:''}
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `}
-        </div>
-    `;
-}
-
-function openExpenseModal(editId) {
-    const e = editId ? APP.expenses.find(x=>x.id===editId) : null;
-    openModal(e?'Edit Expense':'Add Expense', `
-        <div class="form-group">
-            <label class="form-label">Date</label>
-            <input type="date" id="eDate" class="form-input" value="${e?e.date:fmtDate(new Date())}">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Category</label>
-            <select id="eCat" class="form-input" onchange="togglePersonField()">
-                ${EXPENSE_CATEGORIES.map(c=>`<option ${e&&e.category===c?'selected':''}>${c}</option>`).join('')}
-            </select>
-        </div>
-        <div class="form-group" id="ePersonGroup" style="${e&&e.category==='Given to Person'||!e?'':'display:none'}">
-            <label class="form-label">Person Name</label>
-            <input type="text" id="ePerson" class="form-input" placeholder="Name of the person" value="${e?e.person:''}">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Amount (₹)</label>
-            <input type="number" id="eAmount" class="form-input" placeholder="0" min="0" value="${e?e.amount:''}">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Description</label>
-            <input type="text" id="eDesc" class="form-input" placeholder="Details about this expense" value="${e?e.description:''}">
-        </div>
-        <button class="btn-primary w-full" onclick="saveExpense('${editId||''}')">
-            <i class="fas fa-save mr-2"></i>${e?'Update':'Save'} Expense
-        </button>
-    `);
-}
-function togglePersonField() {
-    const cat = document.getElementById('eCat').value;
-    document.getElementById('ePersonGroup').style.display = cat==='Given to Person'?'':'none';
-}
-function saveExpense(editId) {
-    const date = document.getElementById('eDate').value;
-    const category = document.getElementById('eCat').value;
-    const person = document.getElementById('ePerson').value.trim();
-    const amount = parseFloat(document.getElementById('eAmount').value);
-    const desc = document.getElementById('eDesc').value.trim();
-    if (!date||!amount||amount<=0) { showToast('Please fill date and valid amount','error'); return; }
-    if (category==='Given to Person'&&!person) { showToast('Please enter the person name','error'); return; }
-    if (editId) {
-        const e = APP.expenses.find(x=>x.id===editId);
-        if (e) { e.date=date; e.category=category; e.person=person; e.amount=amount; e.description=desc; }
-        showToast('Expense updated');
-    } else {
-        APP.expenses.push({ id:genId(), date, category, person, amount, description:desc, createdAt:new Date().toISOString() });
-        showToast('Expense added successfully');
-    }
-    saveData(APP); closeModal(); navigateTo('expenses');
-}
-function deleteExpense(id) {
-    openModal('Delete Expense', `
-        <p class="text-gray-600 mb-6">Are you sure you want to delete this expense entry?</p>
-        <div class="flex gap-3">
-            <button class="btn-outline flex-1" onclick="closeModal()">Cancel</button>
-            <button class="btn-danger flex-1" onclick="APP.expenses=APP.expenses.filter(x=>x.id!=='${id}');saveData(APP);closeModal();navigateTo('expenses');showToast('Expense deleted','warning');">Delete</button>
-        </div>
-    `);
-}
-
-/* ========================================================================
-   BANK REPORT PAGE (Passbook Style)
-   ======================================================================== */
-function renderBank(container) {
-    const sorted = [...APP.bankTransactions].sort((a,b) => new Date(a.date)-new Date(b.date));
-    // Calculate running balance
-    let balance = 0;
-    const withBalance = sorted.map(t => {
-        balance += t.type==='Deposit' ? t.amount : -t.amount;
-        return { ...t, balance };
-    });
-    const totalDeposits = sumField(sorted.filter(t=>t.type==='Deposit'),'amount');
-    const totalWithdrawals = sumField(sorted.filter(t=>t.type==='Withdrawal'),'amount');
-    const finalBalance = balance;
-
-    container.innerHTML = `
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-            <div>
-                <p class="text-sm text-gray-500">Bank Passbook Report</p>
-            </div>
-            <div class="flex gap-2">
-                ${currentUser.role==='admin'?`<button class="btn-primary" onclick="openBankModal()"><i class="fas fa-plus mr-2"></i>Add Transaction</button>`:''}
-                <button class="btn-outline" onclick="printSection('bankSection')"><i class="fas fa-print mr-2"></i>Print</button>
-            </div>
-        </div>
-
-        <!-- Summary Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div class="card bg-pri-50 border-pri-100">
-                <p class="text-xs text-pri-400 font-600 uppercase tracking-wide">Total Deposits</p>
-                <p class="text-xl font-700 text-pri-500 mt-1">${fmtCurrency(totalDeposits)}</p>
-            </div>
-            <div class="card bg-red-50 border-red-100">
-                <p class="text-xs text-red-400 font-600 uppercase tracking-wide">Total Withdrawals</p>
-                <p class="text-xl font-700 text-red-600 mt-1">${fmtCurrency(totalWithdrawals)}</p>
-            </div>
-            <div class="card bg-gold-50 border-gold-100">
-                <p class="text-xs text-gold-500 font-600 uppercase tracking-wide">Current Balance</p>
-                <p class="text-xl font-700 text-gold-600 mt-1">${fmtCurrency(finalBalance)}</p>
-            </div>
-        </div>
-
-        <!-- Passbook -->
-        <div class="card overflow-hidden p-0" id="bankSection">
-            <div class="bg-pri-500 text-white px-5 py-3">
-                <h3 class="font-display font-700">Passbook</h3>
-                <p class="text-pri-200 text-xs">${APP.settings.churchName}</p>
-            </div>
-            ${withBalance.length===0?`
-                <div class="empty-state"><i class="fas fa-university block"></i><p class="text-lg font-600 mb-1">No transactions yet</p><p class="text-sm">Admin can add bank transactions here.</p></div>
-            `:`
-                <div class="overflow-x-auto">
-                    <table class="data-table">
-                        <thead><tr>
-                            <th>Date</th><th>Type</th><th>Description</th><th>Reference</th><th class="text-right">Deposit</th><th class="text-right">Withdrawal</th><th class="text-right">Balance</th>
-                            ${currentUser.role==='admin'?'<th class="text-right">Actions</th>':''}
-                        </tr></thead>
-                        <tbody>
-                            ${withBalance.map(t => `
-                                <tr>
-                                    <td class="whitespace-nowrap">${fmtDateDisplay(t.date)}</td>
-                                    <td><span class="badge ${t.type==='Deposit'?'badge-green':'badge-red'}">${t.type}</span></td>
-                                    <td class="text-gray-600 max-w-xs truncate">${t.description||'-'}</td>
-                                    <td class="text-gray-400 text-sm">${t.reference||'-'}</td>
-                                    <td class="text-right font-600 text-pri-500 whitespace-nowrap">${t.type==='Deposit'?fmtCurrency(t.amount):'-'}</td>
-                                    <td class="text-right font-600 text-red-600 whitespace-nowrap">${t.type==='Withdrawal'?fmtCurrency(t.amount):'-'}</td>
-                                    <td class="text-right font-700 whitespace-nowrap ${t.balance<0?'text-red-600':'text-gray-800'}">${fmtCurrency(t.balance)}</td>
-                                    ${currentUser.role==='admin'?`
-                                    <td class="text-right whitespace-nowrap">
-                                        <button class="text-gray-400 hover:text-pri-500 mx-1" onclick="openBankModal('${t.id}')"><i class="fas fa-edit"></i></button>
-                                        <button class="text-gray-400 hover:text-red-500 mx-1" onclick="deleteBankTx('${t.id}')"><i class="fas fa-trash"></i></button>
-                                    </td>`:''}
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `}
-        </div>
-    `;
-}
-
-function openBankModal(editId) {
-    const t = editId ? APP.bankTransactions.find(x=>x.id===editId) : null;
-    openModal(t?'Edit Transaction':'Add Transaction', `
-        <div class="form-group">
-            <label class="form-label">Date</label>
-            <input type="date" id="bDate" class="form-input" value="${t?t.date:fmtDate(new Date())}">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Type</label>
-            <select id="bType" class="form-input">
-                <option ${t&&t.type==='Deposit'?'selected':''}>Deposit</option>
-                <option ${t&&t.type==='Withdrawal'?'selected':''}>Withdrawal</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="form-label">Amount (₹)</label>
-            <input type="number" id="bAmount" class="form-input" placeholder="0" min="0" value="${t?t.amount:''}">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Description</label>
-            <input type="text" id="bDesc" class="form-input" placeholder="Transaction details" value="${t?t.description:''}">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Reference Number</label>
-            <input type="text" id="bRef" class="form-input" placeholder="Optional" value="${t?t.reference:''}">
-        </div>
-        <button class="btn-primary w-full" onclick="saveBankTx('${editId||''}')">
-            <i class="fas fa-save mr-2"></i>${t?'Update':'Save'} Transaction
-        </button>
-    `);
-}
-function saveBankTx(editId) {
-    const date = document.getElementById('bDate').value;
-    const type = document.getElementById('bType').value;
-    const amount = parseFloat(document.getElementById('bAmount').value);
-    const desc = document.getElementById('bDesc').value.trim();
-    const reference = document.getElementById('bRef').value.trim();
-    if (!date||!amount||amount<=0) { showToast('Please fill date and valid amount','error'); return; }
-    if (editId) {
-        const t = APP.bankTransactions.find(x=>x.id===editId);
-        if (t) { t.date=date; t.type=type; t.amount=amount; t.description=desc; t.reference=reference; }
-        showToast('Transaction updated');
-    } else {
-        APP.bankTransactions.push({ id:genId(), date, type, amount, description:desc, reference, createdAt:new Date().toISOString() });
-        showToast('Transaction added successfully');
-    }
-    saveData(APP); closeModal(); navigateTo('bank');
-}
-function deleteBankTx(id) {
-    openModal('Delete Transaction', `
-        <p class="text-gray-600 mb-6">Are you sure you want to delete this bank transaction? Balance will be recalculated.</p>
-        <div class="flex gap-3">
-            <button class="btn-outline flex-1" onclick="closeModal()">Cancel</button>
-            <button class="btn-danger flex-1" onclick="APP.bankTransactions=APP.bankTransactions.filter(x=>x.id!=='${id}');saveData(APP);closeModal();navigateTo('bank');showToast('Transaction deleted','warning');">Delete</button>
-        </div>
-    `);
-}
-
-/* ========================================================================
-   SETTINGS PAGE (Admin Only)
-   ======================================================================== */
-function renderSettings(container) {
-    const s = APP.settings;
-    container.innerHTML = `
-        <!-- Visibility Controls -->
-        <div class="card mb-6">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-10 h-10 rounded-lg bg-pri-50 flex items-center justify-center">
-                    <i class="fas fa-eye text-pri-500"></i>
-                </div>
-                <div>
-                    <h3 class="font-display font-700">Member Visibility Controls</h3>
-                    <p class="text-sm text-gray-500">Control what church members can see in the app</p>
-                </div>
-            </div>
-            <div class="space-y-5">
-                <div class="flex items-center justify-between py-3 border-b border-cream-200">
-                    <div>
-                        <p class="font-600 text-sm">Offerings</p>
-                        <p class="text-xs text-gray-500">Allow members to view offering records</p>
-                    </div>
-                    <label class="toggle">
-                        <input type="checkbox" ${s.showOfferingsToUsers?'checked':''} onchange="toggleVisibility('showOfferingsToUsers',this.checked)">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                <div class="flex items-center justify-between py-3 border-b border-cream-200">
-                    <div>
-                        <p class="font-600 text-sm">Expenses</p>
-                        <p class="text-xs text-gray-500">Allow members to view expense records</p>
-                    </div>
-                    <label class="toggle">
-                        <input type="checkbox" ${s.showExpensesToUsers?'checked':''} onchange="toggleVisibility('showExpensesToUsers',this.checked)">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                <div class="flex items-center justify-between py-3">
-                    <div>
-                        <p class="font-600 text-sm">Bank Report</p>
-                        <p class="text-xs text-gray-500">Allow members to view bank passbook</p>
-                    </div>
-                    <label class="toggle">
-                        <input type="checkbox" ${s.showBankToUsers?'checked':''} onchange="toggleVisibility('showBankToUsers',this.checked)">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <!-- Church Info -->
-        <div class="card mb-6">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-10 h-10 rounded-lg bg-gold-50 flex items-center justify-center">
-                    <i class="fas fa-church text-gold-500"></i>
-                </div>
-                <div>
-                    <h3 class="font-display font-700">Church Information</h3>
-                    <p class="text-sm text-gray-500">Update church details</p>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Church Name</label>
-                <input type="text" id="sChurchName" class="form-input" value="${s.churchName}">
-            </div>
-            <button class="btn-primary" onclick="saveChurchInfo()"><i class="fas fa-save mr-2"></i>Save Changes</button>
-        </div>
-
-        <!-- User Management -->
-        <div class="card mb-6">
-            <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
-                        <i class="fas fa-users text-blue-500"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-display font-700">User Management</h3>
-                        <p class="text-sm text-gray-500">Manage app users</p>
-                    </div>
-                </div>
-                <button class="btn-outline btn-sm" onclick="openAddUserModal()"><i class="fas fa-user-plus mr-1"></i>Add User</button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="data-table">
-                    <thead><tr><th>Username</th><th>Name</th><th>Role</th><th class="text-right">Actions</th></tr></thead>
-                    <tbody>
-                        ${APP.users.map(u => `
-                            <tr>
-                                <td class="font-600">${u.id}</td>
-                                <td>${u.name}</td>
-                                <td><span class="badge ${u.role==='admin'?'badge-gold':'badge-green'}">${u.role==='admin'?'Admin':'Member'}</span></td>
-                                <td class="text-right">
-                                    ${u.id!=='admin'?`<button class="text-gray-400 hover:text-red-500" onclick="deleteUser('${u.id}')"><i class="fas fa-trash"></i></button>`:'<span class="text-xs text-gray-400">Primary</span>'}
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Data Management -->
-        <div class="card">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
-                    <i class="fas fa-database text-red-500"></i>
-                </div>
-                <div>
-                    <h3 class="font-display font-700">Data Management</h3>
-                    <p class="text-sm text-gray-500">Export or reset all app data</p>
-                </div>
-            </div>
-            <div class="flex flex-wrap gap-3">
-                <button class="btn-outline" onclick="exportData()"><i class="fas fa-download mr-2"></i>Export Data (JSON)</button>
-                <button class="btn-danger" onclick="resetAllData()"><i class="fas fa-exclamation-triangle mr-2"></i>Reset All Data</button>
-            </div>
-        </div>
-    `;
-}
-
-function toggleVisibility(key, value) {
-    APP.settings[key] = value;
-    saveData(APP);
-    const labels = { showOfferingsToUsers:'Offerings', showExpensesToUsers:'Expenses', showBankToUsers:'Bank Report' };
-    addNotification(
-        `${labels[key]} ${value?'Visible':'Hidden'}`,
-        `Admin has ${value?'made':'hidden'} the ${labels[key]} section for members.`
-    );
-    showToast(`${labels[key]} ${value?'is now visible to members':'is now hidden from members'}`, 'info');
-    buildSidebar(); // Update nav items
-}
-
-function saveChurchInfo() {
-    const name = document.getElementById('sChurchName').value.trim();
-    if (!name) { showToast('Church name cannot be empty','error'); return; }
-    APP.settings.churchName = name;
-    saveData(APP);
-    showToast('Church information updated');
-}
-
-function openAddUserModal() {
-    openModal('Add New User', `
-        <div class="form-group">
-            <label class="form-label">Username (login ID)</label>
-            <input type="text" id="nuId" class="form-input" placeholder="e.g. john">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Full Name</label>
-            <input type="text" id="nuName" class="form-input" placeholder="e.g. John Samuel">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Password</label>
-            <input type="text" id="nuPass" class="form-input" placeholder="Set a password">
-        </div>
-        <div class="form-group">
-            <label class="form-label">Role</label>
-            <select id="nuRole" class="form-input">
-                <option>user</option>
-                <option>admin</option>
-            </select>
-        </div>
-        <button class="btn-primary w-full" onclick="saveNewUser()"><i class="fas fa-user-plus mr-2"></i>Create User</button>
-    `);
-}
-function saveNewUser() {
-    const id = document.getElementById('nuId').value.trim().toLowerCase();
-    const name = document.getElementById('nuName').value.trim();
-    const pass = document.getElementById('nuPass').value;
-    const role = document.getElementById('nuRole').value;
-    if (!id||!name||!pass) { showToast('Please fill all fields','error'); return; }
-    if (APP.users.find(u=>u.id===id)) { showToast('Username already exists','error'); return; }
-    APP.users.push({ id, name, role, password:pass });
-    saveData(APP); closeModal(); navigateTo('settings');
-    showToast('User created successfully');
-}
-function deleteUser(id) {
-    openModal('Delete User', `
-        <p class="text-gray-600 mb-6">Are you sure you want to delete this user?</p>
-        <div class="flex gap-3">
-            <button class="btn-outline flex-1" onclick="closeModal()">Cancel</button>
-            <button class="btn-danger flex-1" onclick="APP.users=APP.users.filter(u=>u.id!=='${id}');saveData(APP);closeModal();navigateTo('settings');showToast('User deleted','warning');">Delete</button>
-        </div>
-    `);
-}
-
-function exportData() {
-    const blob = new Blob([JSON.stringify(APP, null, 2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `cah_backup_${fmtDate(new Date())}.json`; a.click();
-    URL.revokeObjectURL(url);
-    showToast('Data exported successfully');
-}
-function resetAllData() {
-    openModal('Reset All Data', `
-        <div class="text-center mb-6">
-            <div class="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-exclamation-triangle text-2xl text-red-500"></i>
-            </div>
-            <p class="font-700 text-lg mb-2">This will delete ALL data</p>
-            <p class="text-sm text-gray-500">All meetings, offerings, expenses, bank transactions, and users (except admin) will be permanently removed. This cannot be undone.</p>
-        </div>
-        <div class="flex gap-3">
-            <button class="btn-outline flex-1" onclick="closeModal()">Cancel</button>
-            <button class="btn-danger flex-1" onclick="confirmReset()">Reset Everything</button>
-        </div>
-    `);
-}
-function confirmReset() {
-    const d = getDefaultData();
-    d.settings = APP.settings; // Keep settings
-    d.users = APP.users.filter(u=>u.id==='admin'); // Keep admin only
-    APP = d;
-    saveData(APP); closeModal(); navigateTo('dashboard');
-    showToast('All data has been reset','warning');
-}
-
-/* ========================================================================
-   PRINT HELPER
-   ======================================================================== */
-function printSection(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const w = window.open('','','width=800,height=600');
-    w.document.write(`<html><head><title>Print - ${APP.settings.churchName}</title>
-        <style>body{font-family:'Source Sans 3',sans-serif;padding:24px;color:#1A1A2E;}
-        table{width:100%;border-collapse:collapse;margin-top:16px;}
-        th,td{padding:8px 12px;border:1px solid #ddd;text-align:left;font-size:13px;}
-        th{background:#f5f5f5;font-weight:600;}
-        h2{font-family:'Playfair Display',serif;margin-bottom:4px;}
-        .sub{color:#666;font-size:13px;margin-bottom:16px;}</style></head><body>`);
-    w.document.write(`<h2>${APP.settings.churchName}</h2><p class="sub">Printed on ${new Date().toLocaleString('en-IN')}</p>`);
-    w.document.write(el.innerHTML);
-    w.document.write('</body></html>');
-    w.document.close();
-    w.print();
-}
-
-/* ========================================================================
-   INITIALIZATION
-   ======================================================================== */
-checkSession();
+// Location toggle
+document.getElementById('shareLocation')?.addEventListener('change', function() {
+  document.getElementById('locationInfo').style.display = this.checked ? 'flex' : 'none';
+});
 </script>
 </body>
 </html>
